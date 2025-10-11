@@ -39,3 +39,37 @@
 
 # debug information files
 *.dwo
+
+# Compiled object files and binaries
+*.elf
+*.hex
+*.bin
+*.eep
+*.o
+*.d
+
+# Backup files
+*.bak
+
+# Temporary files
+*.tmp
+*.temp
+
+# Logs
+*.log
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE-specific files
+.vscode/
+.idea/
+*.code-workspace
+
+# Arduino specific directories
+/libraries
+/build
+
+# Sketch for testing
+OneLED.ino
