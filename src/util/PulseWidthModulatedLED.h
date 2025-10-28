@@ -6,7 +6,7 @@
 class PulseWidthModulatedLED {
   public:
     PulseWidthModulatedLED(uint8_t pin, bool reverse = false);
-    bool begin();
+    void begin();
     void setBrightness(uint8_t brightness);
     uint8_t getBrightness() const;
     void setReverse(bool reverse);
@@ -16,8 +16,9 @@ class PulseWidthModulatedLED {
 
   private:
     uint8_t _pin;
-    uint8_t _brightness;
     bool _reverse;
+    uint8_t _brightness;
+    void _write(uint8_t value);
 };
 
 #endif
