@@ -1,35 +1,71 @@
 #include "RedGreenBlueLED.h"
 
 RedGreenBlueLED::RedGreenBlueLED(int redPin, int greenPin, int bluePin, bool isCommonAnode)
-  : _redPin(redPin), _greenPin(greenPin), _bluePin(bluePin), _isCommonAnode(isCommonAnode) {
-    _brightness = 255; _gammaEnabled = false;
+  : _redPin(redPin), _greenPin(greenPin), _bluePin(bluePin), _isCommonAnode(isCommonAnode),
+    _brightness(255), _gammaEnabled(false) {
     _RGB[0] = _RGB[1] = _RGB[2] = 0;
   }
 
 bool RedGreenBlueLED::begin() {
   if (_redPin < 0 || _greenPin < 0 || _bluePin < 0) { return false; }
 
-  pinMode(_redPin, OUTPUT);
-  pinMode(_greenPin, OUTPUT);
-  pinMode(_bluePin, OUTPUT);
-
+  #ifdef ESP32
+    #if ESP_ARDUINO_VERSION_MAJOR >= 3
+      ledcAttach(_redPin, 5000, 8);   // 5 kHz frequency, 8-bit resolution
+      ledcAttach(_greenPin, 5000, 8); // 5 kHz frequency, 8-bit resolution
+      ledcAttach(_bluePin, 5000, 8);  // 5 kHz frequency, 8-bit resolution
+    #else
+      ledcSetup(_redPin, 5000, 8);
+      ledcSetup(_greenPin, 5000, 8);
+      ledcSetup(_bluePin, 5000, 8);
+      ledcAttachPin(_redPin, _redPin);
+      ledcAttachPin(_greenPin, _greenPin);
+      ledcAttachPin(_bluePin, _bluePin);
+    #endif
+  #else
+    pinMode(_redPin, OUTPUT);
+    pinMode(_greenPin, OUTPUT);
+    pinMode(_bluePin, OUTPUT);
+  #endif
   return true;
 }
 
+uint8_t RedGreenBlueLED::_setColor(uint8_t color) {
+  color = map(constrain(color, 0, 255), 0, 255, 0, _brightness);
+  if (_gammaEnabled) { color = _gammaTable[color]; }
+  if (_isCommonAnode) { color = 255 - color; }
+  return color;
+}
+
+void RedGreenBlueLED::_showRGB(uint8_t red, uint8_t green, uint8_t blue) {
+  _RGB[0] = red; _RGB[1] = green; _RGB[2] = blue;
+
+  #ifdef ESP32
+    ledcWrite(_redPin, value);
+    ledcWrite(_greenPin, value);
+    ledcWrite(_bluePin, value);
+  #else
+    analogWrite(_redPin, _setColor(red));
+    analogWrite(_greenPin, _setColor(green));
+    analogWrite(_bluePin, _setColor(blue));
+  #endif
+}
+
 void RedGreenBlueLED::setRGB(const uint8_t rgb[3]) {
-  showRGB(rgb[0], rgb[1], rgb[2]);
+  _showRGB(rgb[0], rgb[1], rgb[2]);
 }
 
 void RedGreenBlueLED::setRGB(uint8_t red, uint8_t green, uint8_t blue) {
-  showRGB(red, green, blue);
+  _showRGB(red, green, blue);
 }
 
-const uint8_t* RedGreenBlueLED::getRGB() const {
-  return _RGB;
-}
+const uint8_t* RedGreenBlueLED::getRGB() const { return _RGB; }
+const uint8_t RedGreenBlueLED::getRed() const { return _RGB[0]; }
+const uint8_t RedGreenBlueLED::getGreen() const { return _RGB[1]; }
+const uint8_t RedGreenBlueLED::getBlue() const { return _RGB[2]; }
 
 void RedGreenBlueLED::setHex(uint32_t hex) {
-  showRGB((hex >> 16) & 0xFF, (hex >> 8) & 0xFF, hex & 0xFF);
+  _showRGB((hex >> 16) & 0xFF, (hex >> 8) & 0xFF, hex & 0xFF);
 }
 
 const uint32_t RedGreenBlueLED::getHex() const {
@@ -44,30 +80,11 @@ String RedGreenBlueLED::getHexString() const {
 
 void RedGreenBlueLED::setBrightness(uint8_t brightness) {
   _brightness = constrain(brightness, 0, 255);
-  showRGB(_RGB[0], _RGB[1], _RGB[2]);
+  _showRGB(_RGB[0], _RGB[1], _RGB[2]);
 }
 
 const uint8_t RedGreenBlueLED::getBrightness() const {
   return _brightness;
-}
-
-uint8_t RedGreenBlueLED::setColor(uint8_t color) {
-  color = map(constrain(color, 0, 255), 0, 255, 0, _brightness);
-  if (_gammaEnabled) {
-    color = _gammaTable[color];
-  }
-  if (_isCommonAnode) {
-    color = 255 - color;
-  }
-  return color;
-}
-
-void RedGreenBlueLED::showRGB(uint8_t red, uint8_t green, uint8_t blue) {
-  _RGB[0] = red; _RGB[1] = green; _RGB[2] = blue;
-
-  analogWrite(_redPin, setColor(red));
-  analogWrite(_greenPin, setColor(green));
-  analogWrite(_bluePin, setColor(blue));
 }
 
 void RedGreenBlueLED::setHSV(int hue, float sat, float val) {
@@ -90,7 +107,7 @@ void RedGreenBlueLED::setHSV(int hue, float sat, float val) {
     case 5: red = val, green = minVal, blue = intVal1; break;
     default: red = green = blue = 0; break;
   }
-  showRGB((int)(red * 255), (int)(green * 255), (int)(blue * 255));
+  _showRGB((int)(red * 255), (int)(green * 255), (int)(blue * 255));
 }
 
 void RedGreenBlueLED::setGammaCorrection(bool enabled) {
@@ -118,15 +135,15 @@ const uint8_t RedGreenBlueLED::_gammaTable[256] = {
 
 void RedGreenBlueLED::off() { setRGB(RedGreenBlue::BLACK); }
 void RedGreenBlueLED::setWhite() { setRGB(RedGreenBlue::WHITE); }
-void RedGreenBlueLED::setPink() { setRGB(RedGreenBlue::HOT_PINK); }
+void RedGreenBlueLED::setPink() { setRGB(RedGreenBlue::HOTPINK); }
 void RedGreenBlueLED::setRed() { setRGB(RedGreenBlue::RED); }
 void RedGreenBlueLED::setOrange() { setRGB(RedGreenBlue::ORANGE); }
 void RedGreenBlueLED::setYellow() { setRGB(RedGreenBlue::YELLOW); }
-void RedGreenBlueLED::setLime() { setRGB(RedGreenBlue::LIME_GREEN); }
+void RedGreenBlueLED::setLime() { setRGB(RedGreenBlue::LIMEGREEN); }
 void RedGreenBlueLED::setGreen() { setRGB(RedGreenBlue::GREEN); }
-void RedGreenBlueLED::setSpring() { setRGB(RedGreenBlue::SPRING_GREEN); }
+void RedGreenBlueLED::setSpring() { setRGB(RedGreenBlue::SPRING); }
 void RedGreenBlueLED::setCyan() { setRGB(RedGreenBlue::CYAN); }
-void RedGreenBlueLED::setSky() { setRGB(RedGreenBlue::SKY_BLUE); }
+void RedGreenBlueLED::setSky() { setRGB(RedGreenBlue::SKYBLUE); }
 void RedGreenBlueLED::setBlue() { setRGB(RedGreenBlue::BLUE); }
 void RedGreenBlueLED::setViolet() { setRGB(RedGreenBlue::VIOLET); }
 void RedGreenBlueLED::setMagenta() { setRGB(RedGreenBlue::MAGENTA); }
@@ -139,7 +156,7 @@ void RedGreenBlueLED::setCMYK(float cyan, float magenta, float yellow, float key
   uint8_t red = (uint8_t)(255 * (1.0f - cyan) * (1.0f - key));
   uint8_t green = (uint8_t)(255 * (1.0f - magenta) * (1.0f - key));
   uint8_t blue = (uint8_t)(255 * (1.0f - yellow) * (1.0f - key));
-  showRGB(red, green, blue);
+  _showRGB(red, green, blue);
 }
 
 void RedGreenBlueLED::mapColor(int value, int fromValue, int toValue) {
@@ -150,19 +167,17 @@ void RedGreenBlueLED::mapColor(int value, int fromValue, int toValue) {
   setHSV(hue);
 }
 
-// RedGreenBlue
-
 const uint8_t RedGreenBlue::BLACK[3] = { 0, 0, 0 };
 const uint8_t RedGreenBlue::WHITE[3] = { 255, 255, 255 };
-const uint8_t RedGreenBlue::HOT_PINK[3] = { 255, 0, 127 };
+const uint8_t RedGreenBlue::HOTPINK[3] = { 255, 0, 127 };
 const uint8_t RedGreenBlue::RED[3] = { 255, 0, 0 };
 const uint8_t RedGreenBlue::ORANGE[3] = { 255, 127, 0 };
 const uint8_t RedGreenBlue::YELLOW[3] = { 255, 255, 0 };
-const uint8_t RedGreenBlue::LIME_GREEN[3] = { 127, 255, 0 };
+const uint8_t RedGreenBlue::LIMEGREEN[3] = { 127, 255, 0 };
 const uint8_t RedGreenBlue::GREEN[3] = { 0, 255, 0 };
-const uint8_t RedGreenBlue::SPRING_GREEN[3] = { 0, 255, 127 };
+const uint8_t RedGreenBlue::SPRING[3] = { 0, 255, 127 };
 const uint8_t RedGreenBlue::CYAN[3] = { 0, 255, 255 };
-const uint8_t RedGreenBlue::SKY_BLUE[3] = { 0, 127, 255 };
+const uint8_t RedGreenBlue::SKYBLUE[3] = { 0, 127, 255 };
 const uint8_t RedGreenBlue::BLUE[3] = { 0, 0, 255 };
 const uint8_t RedGreenBlue::VIOLET[3] = { 127, 0, 255 };
 const uint8_t RedGreenBlue::MAGENTA[3] = { 255, 0, 255 };
