@@ -17,18 +17,11 @@ A lightweight Arduino library for simple LED control.
 
 ### OneLED
 
-A minimal class to control a single digital LED with optional logic inversion.
+A minimal class to control a single digital LED or PWM-based LED with optional logic inversion.
 
 - `on()`, `off()`, `toggle()` for easy control
 - `isOn()` to check LED state
-
-### PulseWidthModulatedLED
-
-A simple PWM-based LED brightness controller using `analogWrite`.
-
 - `setBrightness(value)` for 0–255 control
-- Tracks brightness state
-- Works with any PWM-capable pin
 
 ### RedGreenBlueLED
 
