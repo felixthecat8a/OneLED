@@ -2,26 +2,36 @@
 #define ONE_LED_H
 
 #include <Arduino.h>
-#include "util/PulseWidthModulatedLED.h"
 #include "util/RedGreenBlueLED.h"
 #include "util/OneMoreTime.h"
 
-class OneLED {
-  public:
-    OneLED(uint8_t pin, bool reverse = false);
-    bool begin();
-    void on();
-    void off();
-    void toggle();
-    bool isOn();
-    bool isReverse();
-    void setPin(uint8_t pin);
-    void setReverse(bool reverse);
+#ifndef LED_BUILTIN
+  #define LED_BUILTIN 13
+#endif
 
-  private:
-    uint8_t _pin;
-    bool _state;
-    bool _reverse;
+class OneLED {
+public:
+  OneLED(uint8_t pin = LED_BUILTIN, bool isPWM = false, bool reverse = false);
+
+  bool begin();
+  void on();
+  void off();
+  void toggle();
+  bool isOn() const;
+  void setPin(uint8_t pin);
+  void setReverse(bool reverse);
+  bool isReverse() const;
+  bool isPWM() const;
+  void setBrightness(uint8_t brightness);
+  uint8_t getBrightness() const;
+
+private:
+  void writeRaw(uint8_t value);
+  uint8_t _pin;
+  bool _state;
+  bool _reverse;
+  bool _isPWM;
+  uint8_t _brightness;
 };
 
 #endif
