@@ -8,25 +8,28 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        board:
+          - arduino:avr:uno
+          - arduino:renesas_uno:unor4wifi
+
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v5
 
-    - name: Install Arduino CLI
-      uses: arduino/setup-arduino-cli@v1
+      - name: Setup Arduino CLI
+        uses: arduino/setup-arduino-cli@v1
 
-    - name: Install Arduino board core
-      run: |
-        arduino-cli core update-index
-        arduino-cli core install arduino:avr
+      - name: Install board cores
+        run: |
+          arduino-cli core update-index
+          arduino-cli core install arduino:avr
+          arduino-cli core install arduino:renesas_uno
 
-    - name: Install dependencies (if any)
-      run: |
-        arduino-cli lib update-index
-
-    - name: Compile all examples
-      run: |
-        for example in examples/*/*.ino; do
-          echo "Compiling $example..."
-          arduino-cli compile --fqbn arduino:avr:uno $example
-        done
+      - name: Compile all examples
+        run: |
+          for example in examples/*/*.ino; do
+            echo "Compiling $example for board ${{ matrix.board }}"
+            arduino-cli compile --fqbn ${{ matrix.board }} $example
+          done
