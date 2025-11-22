@@ -7,6 +7,7 @@
 ![GitHub top language](https://img.shields.io/github/languages/top/felixthecat8a/OneLED)
 
 ![Check Arduino](https://github.com/felixthecat8a/OneLED/actions/workflows/compile-examples.yml/badge.svg)
+![Spell Check](https://github.com/felixthecat8a/OneLED/actions/workflows/spell-check.yml/badge.svg)
 
 A lightweight Arduino library for simple LED control.
 
