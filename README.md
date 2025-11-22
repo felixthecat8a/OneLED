@@ -1,5 +1,11 @@
 # OneLED
 
+![GitHub Release](https://img.shields.io/github/v/release/felixthecat8a/OneLED?logo=arduino&logoColor=00878F&logoSize=auto&color=00878F)
+[![License: MIT](https://img.shields.io/github/license/felixthecat8a/OneLED)](https://opensource.org/licenses/MIT)
+![GitHub repo size](https://img.shields.io/github/repo-size/felixthecat8a/OneLED)
+![GitHub repo file or directory count](https://img.shields.io/github/directory-file-count/felixthecat8a/OneLED)
+![GitHub top language](https://img.shields.io/github/languages/top/felixthecat8a/OneLED)
+
 A lightweight Arduino library for simple LED control.
 
 
