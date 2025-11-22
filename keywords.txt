@@ -2,72 +2,90 @@
 # Classes and Data Types
 ##################################
 
-OneLED                KEYWORD1
-RedGreenBlueLED       KEYWORD1
-RedGreenBlue          KEYWORD1
+OneLED  KEYWORD1
+RedGreenBlueLED  KEYWORD1
+RedGreenBlue  KEYWORD1
+OneMoreTime  KEYWORD1
 
 ##################################
 # OneLED Methods
 ##################################
 
-begin                 KEYWORD2
-on                    KEYWORD2
-off                   KEYWORD2
-toggle                KEYWORD2
-isOn                  KEYWORD2
-setPin                KEYWORD2
-setReverse            KEYWORD2
-isReverse             KEYWORD2
-isPWM                 KEYWORD2
-setBrightness         KEYWORD2
-getBrightness         KEYWORD2
+begin  KEYWORD2
+on  KEYWORD2
+off  KEYWORD2
+toggle  KEYWORD2
+isOn  KEYWORD2
+setPin  KEYWORD2
+setReverse  KEYWORD2
+isReverse  KEYWORD2
+isPWM  KEYWORD2
+setBrightness  KEYWORD2
+getBrightness  KEYWORD2
 
 ##################################
 # RedGreenBlueLED Methods
 ##################################
 
-setRGB                KEYWORD2
-getRGB                KEYWORD2
-getRed                KEYWORD2
-getGreen              KEYWORD2
-getBlue               KEYWORD2
-setHex                KEYWORD2
-getHex                KEYWORD2
-getHexString          KEYWORD2
-setHSV                KEYWORD2
-setGammaCorrection    KEYWORD2
-setWhite              KEYWORD2
-setPink               KEYWORD2
-setRed                KEYWORD2
-setOrange             KEYWORD2
-setYellow             KEYWORD2
-setLime               KEYWORD2
-setGreen              KEYWORD2
-setSpring             KEYWORD2
-setCyan               KEYWORD2
-setSky                KEYWORD2
-setBlue               KEYWORD2
-setViolet             KEYWORD2
-setMagenta            KEYWORD2
-setCMYK               KEYWORD2
-mapColor              KEYWORD2
-animateColorwheel     KEYWORD2
+setRGB  KEYWORD2
+getRGB  KEYWORD2
+getRed  KEYWORD2
+getGreen  KEYWORD2
+getBlue  KEYWORD2
+setHex  KEYWORD2
+getHex  KEYWORD2
+getHexString  KEYWORD2
+setHSV  KEYWORD2
+setGammaCorrection  KEYWORD2
+setWhite  KEYWORD2
+setPink  KEYWORD2
+setRed  KEYWORD2
+setOrange  KEYWORD2
+setYellow  KEYWORD2
+setLime  KEYWORD2
+setGreen  KEYWORD2
+setSpring  KEYWORD2
+setCyan  KEYWORD2
+setSky  KEYWORD2
+setBlue  KEYWORD2
+setViolet  KEYWORD2
+setMagenta  KEYWORD2
+setCMYK  KEYWORD2
+mapColor  KEYWORD2
+animateColorwheel  KEYWORD2
+
+##################################
+# OneMoreTime Methods
+##################################
+
+update  KEYWORD2
+tick  KEYWORD2
+isExpired  KEYWORD2
+hasElapsed  KEYWORD2
+reset  KEYWORD2
+restart  KEYWORD2
+setInterval  KEYWORD2
+getInterval  KEYWORD2
+elapsed  KEYWORD2
+pause  KEYWORD2
+resume  KEYWORD2
+isPaused  KEYWORD2
 
 ##################################
 # Color Constants
 ##################################
 
-BLACK                 LITERAL1
-WHITE                 LITERAL1
-HOTPINK               LITERAL1
-RED                   LITERAL1
-ORANGE                LITERAL1
-YELLOW                LITERAL1
-LIMEGREEN             LITERAL1
-GREEN                 LITERAL1
-SPRING                LITERAL1
-CYAN                  LITERAL1
-SKYBLUE               LITERAL1
-BLUE                  LITERAL1
-VIOLET                LITERAL1
-MAGENTA               LITERAL1
+BLACK  LITERAL1
+WHITE  LITERAL1
+HOTPINK  LITERAL1
+RED  LITERAL1
+ORANGE  LITERAL1
+YELLOW  LITERAL1
+LIMEGREEN  LITERAL1
+GREEN  LITERAL1
+SPRING  LITERAL1
+CYAN  LITERAL1
+SKYBLUE  LITERAL1
+BLUE  LITERAL1
+VIOLET  LITERAL1
+MAGENTA  LITERAL1
