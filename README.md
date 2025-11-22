@@ -6,6 +6,7 @@
 ![GitHub repo file or directory count](https://img.shields.io/github/directory-file-count/felixthecat8a/OneLED)
 ![GitHub top language](https://img.shields.io/github/languages/top/felixthecat8a/OneLED)
 
+![Arduino Lint](https://github.com/felixthecat8a/OneLED/actions/workflows/lint-arduino.yml/badge.svg?branch=main)
 ![Check Arduino](https://github.com/felixthecat8a/OneLED/actions/workflows/compile-examples.yml/badge.svg)
 ![Spell Check](https://github.com/felixthecat8a/OneLED/actions/workflows/spell-check.yml/badge.svg)
 
