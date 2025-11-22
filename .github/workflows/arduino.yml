@@ -34,7 +34,6 @@ jobs:
             arduino-cli compile \
               --fqbn ${{ matrix.board }} \
               --libraries . \
-              --libraries /src/util/OneMoreTime.h \
               $example
           done
 
