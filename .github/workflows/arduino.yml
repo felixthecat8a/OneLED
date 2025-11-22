@@ -31,5 +31,9 @@ jobs:
         run: |
           for example in examples/*/*.ino; do
             echo "Compiling $example for board ${{ matrix.board }}"
-            arduino-cli compile --fqbn ${{ matrix.board }} $example
+            arduino-cli compile \
+              --fqbn ${{ matrix.board }} \
+              --libraries . \
+              $example
           done
+
