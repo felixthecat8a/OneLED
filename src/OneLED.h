@@ -2,8 +2,8 @@
 #define ONE_LED_H
 
 #include <Arduino.h>
-#include "util/RedGreenBlueLED.h"
-#include "util/OneMoreTime.h"
+#include "RedGreenBlueLED.h"
+#include "OneMoreTime.h"
 
 #ifndef LED_BUILTIN
   #define LED_BUILTIN 13
