@@ -1,12 +1,9 @@
-name: Check Arduino
+name: Lint Arduino Library
 
 on:
   push:
   pull_request:
-  schedule:
-    - cron: "0 8 * * TUE" # Run every Tuesday at 8 AM UTC
   workflow_dispatch:
-  repository_dispatch:
 
 jobs:
   lint:
@@ -22,3 +19,4 @@ jobs:
           compliance: specification
           library-manager: update
           project-type: library
+          path: ./   # <-- lint the local library folder
