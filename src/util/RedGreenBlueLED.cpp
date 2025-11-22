@@ -11,13 +11,13 @@ bool RedGreenBlueLED::begin() {
 
   #ifdef ESP32
     #if ESP_ARDUINO_VERSION_MAJOR >= 3
-      ledcAttach(_redPin, ESP32_PWM_FREQ, ESP32_PWM_RES);
-      ledcAttach(_greenPin, ESP32_PWM_FREQ, ESP32_PWM_RES);
-      ledcAttach(_bluePin, ESP32_PWM_FREQ, ESP32_PWM_RES);
+      ledcAttach(_redPin, 5000, 8);   // 5 kHz frequency, 8-bit resolution
+      ledcAttach(_greenPin, 5000, 8); // 5 kHz frequency, 8-bit resolution
+      ledcAttach(_bluePin, 5000, 8);  // 5 kHz frequency, 8-bit resolution
     #else
-      ledcSetup(_redPin, ESP32_PWM_FREQ, ESP32_PWM_RES);
-      ledcSetup(_greenPin, ESP32_PWM_FREQ, ESP32_PWM_RES);
-      ledcSetup(_bluePin, ESP32_PWM_FREQ, ESP32_PWM_RES);
+      ledcSetup(_redPin, 5000, 8);
+      ledcSetup(_greenPin, 5000, 8);
+      ledcSetup(_bluePin, 5000, 8);
       ledcAttachPin(_redPin, _redPin);
       ledcAttachPin(_greenPin, _greenPin);
       ledcAttachPin(_bluePin, _bluePin);
