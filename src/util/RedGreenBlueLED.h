@@ -36,6 +36,7 @@ class RedGreenBlueLED {
     void setMagenta();
     void setCMYK(float cyan, float magenta, float yellow, float key);
     void mapColor(int value, int fromValue, int toValue);
+    void animateColorwheel(uint32_t period);
 
   private:
     bool _isCommonAnode, _gammaEnabled;
@@ -47,23 +48,21 @@ class RedGreenBlueLED {
     static const uint8_t _gammaTable[256];
 };
 
-class RedGreenBlue {
-  public:
-    static const uint8_t BLACK[3];
-    static const uint8_t WHITE[3];
-    static const uint8_t HOTPINK[3];
-    static const uint8_t RED[3];
-    static const uint8_t ORANGE[3];
-    static const uint8_t YELLOW[3];
-    static const uint8_t LIMEGREEN[3];
-    static const uint8_t GREEN[3];
-    static const uint8_t SPRING[3];
-    static const uint8_t CYAN[3];
-    static const uint8_t SKYBLUE[3];
-    static const uint8_t BLUE[3];
-    static const uint8_t VIOLET[3];
-    static const uint8_t MAGENTA[3];
+struct RedGreenBlue {
+  static const uint8_t BLACK[3];
+  static const uint8_t WHITE[3];
+  static const uint8_t HOTPINK[3];
+  static const uint8_t RED[3];
+  static const uint8_t ORANGE[3];
+  static const uint8_t YELLOW[3];
+  static const uint8_t LIMEGREEN[3];
+  static const uint8_t GREEN[3];
+  static const uint8_t SPRING[3];
+  static const uint8_t CYAN[3];
+  static const uint8_t SKYBLUE[3];
+  static const uint8_t BLUE[3];
+  static const uint8_t VIOLET[3];
+  static const uint8_t MAGENTA[3];
 };
 
 #endif
-
