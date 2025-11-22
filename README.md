@@ -6,6 +6,8 @@
 ![GitHub repo file or directory count](https://img.shields.io/github/directory-file-count/felixthecat8a/OneLED)
 ![GitHub top language](https://img.shields.io/github/languages/top/felixthecat8a/OneLED)
 
+![Check Arduino](https://github.com/felixthecat8a/OneLED/actions/workflows/arduino.yml/badge.svg)
+
 A lightweight Arduino library for simple LED control.
 
 
