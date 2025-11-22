@@ -1,6 +1,6 @@
 #include <OneLED.h>
 
-PulseWidthModulatedLED fadeLED(3);
+OneLED fadeLED(3, true);
 
 const unsigned long FADE_INTERVAL = 5;
 OneMoreTime fadeTimer(FADE_INTERVAL);
