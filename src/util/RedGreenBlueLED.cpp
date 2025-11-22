@@ -11,13 +11,13 @@ bool RedGreenBlueLED::begin() {
 
   #ifdef ESP32
     #if ESP_ARDUINO_VERSION_MAJOR >= 3
-      ledcAttach(_redPin, 5000, 8);   // 5 kHz frequency, 8-bit resolution
-      ledcAttach(_greenPin, 5000, 8); // 5 kHz frequency, 8-bit resolution
-      ledcAttach(_bluePin, 5000, 8);  // 5 kHz frequency, 8-bit resolution
+      ledcAttach(_redPin, ESP32_PWM_FREQ, ESP32_PWM_RES);
+      ledcAttach(_greenPin, ESP32_PWM_FREQ, ESP32_PWM_RES);
+      ledcAttach(_bluePin, ESP32_PWM_FREQ, ESP32_PWM_RES);
     #else
-      ledcSetup(_redPin, 5000, 8);
-      ledcSetup(_greenPin, 5000, 8);
-      ledcSetup(_bluePin, 5000, 8);
+      ledcSetup(_redPin, ESP32_PWM_FREQ, ESP32_PWM_RES);
+      ledcSetup(_greenPin, ESP32_PWM_FREQ, ESP32_PWM_RES);
+      ledcSetup(_bluePin, ESP32_PWM_FREQ, ESP32_PWM_RES);
       ledcAttachPin(_redPin, _redPin);
       ledcAttachPin(_greenPin, _greenPin);
       ledcAttachPin(_bluePin, _bluePin);
@@ -41,9 +41,9 @@ void RedGreenBlueLED::_showRGB(uint8_t red, uint8_t green, uint8_t blue) {
   _RGB[0] = red; _RGB[1] = green; _RGB[2] = blue;
 
   #ifdef ESP32
-    ledcWrite(_redPin, value);
-    ledcWrite(_greenPin, value);
-    ledcWrite(_bluePin, value);
+    ledcWrite(_redPin, _setColor(red));
+    ledcWrite(_greenPin, _setColor(green));
+    ledcWrite(_bluePin, _setColor(blue));
   #else
     analogWrite(_redPin, _setColor(red));
     analogWrite(_greenPin, _setColor(green));
@@ -107,7 +107,7 @@ void RedGreenBlueLED::setHSV(int hue, float sat, float val) {
     case 5: red = val, green = minVal, blue = intVal1; break;
     default: red = green = blue = 0; break;
   }
-  _showRGB((int)(red * 255), (int)(green * 255), (int)(blue * 255));
+  _showRGB(roundf(red * 255), roundf(green * 255), roundf(blue * 255));
 }
 
 void RedGreenBlueLED::setGammaCorrection(bool enabled) {
@@ -115,22 +115,21 @@ void RedGreenBlueLED::setGammaCorrection(bool enabled) {
 }
 
 const uint8_t RedGreenBlueLED::_gammaTable[256] = {
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2,
-  2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5,
-  5, 6, 6, 6, 7, 7, 7, 8, 8, 9, 9, 10, 10, 10, 11, 11,
-  12, 12, 13, 13, 14, 15, 15, 16, 16, 17, 18, 19, 19, 20, 21, 22,
-  23, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37,
-  38, 40, 41, 42, 43, 44, 46, 47, 48, 50, 51, 52, 54, 55, 56, 58,
-  59, 61, 62, 64, 65, 67, 68, 70, 71, 73, 74, 76, 78, 79, 81, 83,
-  84, 86, 88, 90, 91, 93, 95, 97, 99,100,102,104,106,108,110,112,
-  114,116,118,120,122,124,126,128,130,132,134,136,138,141,143,145,
-  147,149,152,154,156,159,161,163,166,168,170,173,175,178,180,183,
-  185,188,190,193,195,198,201,203,206,209,211,214,217,220,222,225,
-  228,231,234,237,239,242,245,248,251,254,255,255,255,255,255,255,
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+  1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 
+  5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 9, 9, 10, 10, 10, 11, 11, 12, 12, 
+  13, 13, 14, 15, 15, 16, 16, 17, 18, 19, 19, 20, 21, 22, 23, 23, 
+  24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 40, 
+  41, 42, 43, 44, 46, 47, 48, 50, 51, 52, 54, 55, 56, 58, 59, 61, 
+  62, 64, 65, 67, 68, 70, 71, 73, 74, 76, 78, 79, 81, 83, 84, 86, 
+  88, 90, 91, 93, 95, 97, 99,100,102,104,106,108,110,112, 114,116,
+  118,120,122,124,126,128,130,132,134,136,138,141,143,145,147,149,
+  152,154,156,159,161,163,166,168,170,173,175,178,180,183,185,188,
+  190,193,195,198,201,203,206,209,211,214,217,220,222,225,228,231,
+  234,237,239,242,245,248,251,254,255,255,255,255,255,255,255,255,
   255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
-  255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255
+  255,255,255,255,255,255,255,255,255,255,255,255,255,255
 };
 
 void RedGreenBlueLED::off() { setRGB(RedGreenBlue::BLACK); }
@@ -153,9 +152,9 @@ void RedGreenBlueLED::setCMYK(float cyan, float magenta, float yellow, float key
   magenta = constrain(magenta, 0.0f, 1.0f);
   yellow = constrain(yellow, 0.0f, 1.0f);
   key = constrain(key, 0.0f, 1.0f);
-  uint8_t red = (uint8_t)(255 * (1.0f - cyan) * (1.0f - key));
-  uint8_t green = (uint8_t)(255 * (1.0f - magenta) * (1.0f - key));
-  uint8_t blue = (uint8_t)(255 * (1.0f - yellow) * (1.0f - key));
+  uint8_t red = roundf(255 * (1.0f - cyan) * (1.0f - key));
+  uint8_t green = roundf(255 * (1.0f - magenta) * (1.0f - key));
+  uint8_t blue = roundf(255 * (1.0f - yellow) * (1.0f - key));
   _showRGB(red, green, blue);
 }
 
@@ -165,6 +164,12 @@ void RedGreenBlueLED::mapColor(int value, int fromValue, int toValue) {
   value = constrain(value, minValue, maxValue);
   int hue = map(value, minValue, maxValue, 0, 359);
   setHSV(hue);
+}
+
+void RedGreenBlueLED::animateColorwheel(uint32_t period) {
+  float t = (millis() % period) / (float)period;
+  int hue = (int)(t * 360.0f);
+  setHSV(hue, 1.0f, 1.0f);
 }
 
 const uint8_t RedGreenBlue::BLACK[3] = { 0, 0, 0 };
