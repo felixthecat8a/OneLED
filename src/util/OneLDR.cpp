@@ -1,6 +1,6 @@
 #include "OneLDR.h"
 
-#include <cmath>
+#include <math.h>
 
 /* AnalogInput */
 
