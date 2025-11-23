@@ -1,16 +1,7 @@
 #include "OneMoreTime.h"
 
-OneMoreTime::OneMoreTime() {
-  reset();
-}
-
 OneMoreTime::OneMoreTime(unsigned long interval)
   : _interval(interval) {
-  reset();
-}
-
-void OneMoreTime::begin(unsigned long interval) {
-  setInterval(interval);
   reset();
 }
 

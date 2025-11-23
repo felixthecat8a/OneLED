@@ -5,10 +5,8 @@
 
 class OneMoreTime {
 public:
-  OneMoreTime();
   OneMoreTime(unsigned long interval);
 
-  void begin(unsigned long interval);
   void update();
 
   bool tick();
