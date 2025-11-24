@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include "RedGreenBlueLED.h"
 #include "OneMoreTime.h"
-#include "util/OneLDR.h" // component helper
+//#include "util/OneLDR.h" // component helper when ready
 
 #ifndef LED_BUILTIN
   #define LED_BUILTIN 13
