@@ -59,17 +59,17 @@ animateColorwheel  KEYWORD2
 ##################################
 
 update  KEYWORD2
+elapsed KEYWORD2
+reset KEYWORD2
+restart KEYWORD2
 tick  KEYWORD2
-isExpired  KEYWORD2
-hasElapsed  KEYWORD2
-reset  KEYWORD2
-restart  KEYWORD2
-setInterval  KEYWORD2
-getInterval  KEYWORD2
-elapsed  KEYWORD2
-pause  KEYWORD2
+isExpired KEYWORD2
+setInterval KEYWORD2
+getInterval KEYWORD2
+pause KEYWORD2
 resume  KEYWORD2
 isPaused  KEYWORD2
+onExpire  KEYWORD2
 
 ##################################
 # Color Constants
