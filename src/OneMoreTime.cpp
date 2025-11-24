@@ -6,14 +6,31 @@ OneMoreTime::OneMoreTime(unsigned long interval)
 }
 
 void OneMoreTime::update() {
-  if (!_paused) {
-    _now = millis();
-  }
+  _now = millis();
+}
+
+unsigned long OneMoreTime::elapsed() const {
+  return _now - _lastMillis;
+}
+
+void OneMoreTime::reset() {
+  _lastMillis = millis();
+  _now = _lastMillis;
+}
+
+void OneMoreTime::restart() {
+  _lastMillis = millis();
+  _now = _lastMillis;
 }
 
 bool OneMoreTime::tick() {
   if (isExpired()) {
     restart();
+
+    if (_callback != nullptr) {
+      _callback();
+    }
+
     return true;
   }
   return false;
@@ -23,29 +40,12 @@ bool OneMoreTime::isExpired() const {
   return elapsed() >= _interval;
 }
 
-bool OneMoreTime::hasElapsed() const {
-  return isExpired();
-}
-
-void OneMoreTime::reset() {
-  _lastMillis = millis();
-  _now = _lastMillis;
-}
-
-void OneMoreTime::restart() {
-  _lastMillis = _now;
-}
-
 void OneMoreTime::setInterval(unsigned long interval) {
   _interval = interval;
 }
 
 unsigned long OneMoreTime::getInterval() const {
   return _interval;
-}
-
-unsigned long OneMoreTime::elapsed() const {
-  return _now >= _lastMillis ? _now - _lastMillis : 0;
 }
 
 void OneMoreTime::pause() {
@@ -66,4 +66,8 @@ void OneMoreTime::resume() {
 
 bool OneMoreTime::isPaused() const {
   return _paused;
+}
+
+void OneMoreTime::onExpire(TimerCallback cb) {
+  _callback = cb;
 }
