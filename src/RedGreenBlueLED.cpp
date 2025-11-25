@@ -1,33 +1,73 @@
 #include "RedGreenBlueLED.h"
 
-RedGreenBlueLED::RedGreenBlueLED(int redPin, int greenPin, int bluePin, bool isCommonAnode)
-  : _redPin(redPin), _greenPin(greenPin), _bluePin(bluePin), _isCommonAnode(isCommonAnode),
-    _brightness(255), _gammaEnabled(false) {
-    _RGB[0] = _RGB[1] = _RGB[2] = 0;
+#ifdef ESP32
+static bool _ledcChannelUsed[16] = { false };
+
+static int8_t allocateLEDCChannel() {
+  for (int i = 0; i < 16; i++) {
+    if (!_ledcChannelUsed[i]) {
+      _ledcChannelUsed[i] = true;
+      return i;
+    }
   }
+  return -1; // No available channels
+}
+#endif
 
-bool RedGreenBlueLED::begin() {
-  if (_redPin < 0 || _greenPin < 0 || _bluePin < 0) { return false; }
+RedGreenBlueLED::RedGreenBlueLED(
+  uint8_t redPin,
+  uint8_t greenPin,
+  uint8_t bluePin,
+  bool isCommonAnode,
+  bool isESP32,
+  uint8_t redChannel,
+  uint8_t greenChannel,
+  uint8_t blueChannel
+)
+  : _redPin(redPin),
+    _greenPin(greenPin),
+    _bluePin(bluePin),
+    _isCommonAnode(isCommonAnode),
+    _isESP32(isESP32),
+    _redChannel(redChannel),
+    _greenChannel(greenChannel),
+    _blueChannel(blueChannel),
+    _brightness(255),
+    _gammaEnabled(false)
+{
+  _RGB[0] = _RGB[1] = _RGB[2] = 0;
+}
 
-  #ifdef ESP32
-    #if ESP_ARDUINO_VERSION_MAJOR >= 3
-      ledcAttach(_redPin, 5000, 8);   // 5 kHz frequency, 8-bit resolution
-      ledcAttach(_greenPin, 5000, 8); // 5 kHz frequency, 8-bit resolution
-      ledcAttach(_bluePin, 5000, 8);  // 5 kHz frequency, 8-bit resolution
-    #else
-      ledcSetup(_redPin, 5000, 8);
-      ledcSetup(_greenPin, 5000, 8);
-      ledcSetup(_bluePin, 5000, 8);
-      ledcAttachPin(_redPin, _redPin);
-      ledcAttachPin(_greenPin, _greenPin);
-      ledcAttachPin(_bluePin, _bluePin);
+void RedGreenBlueLED::begin() {
+  if (_isESP32) {
+    #ifdef ESP32
+
+      if (_redChannel < 0)   _redChannel   = allocateLEDCChannel();
+      if (_greenChannel < 0) _greenChannel = allocateLEDCChannel();
+      if (_blueChannel < 0)  _blueChannel  = allocateLEDCChannel();
+
+      if (_redChannel < 0 || _greenChannel < 0 || _blueChannel < 0) {
+        return;
+      }
+
+      #if ESP_ARDUINO_VERSION_MAJOR >= 3
+        ledcAttach(_redPin, ESP32_PWM_FREQ, ESP32_PWM_RES);
+        ledcAttach(_greenPin, ESP32_PWM_FREQ, ESP32_PWM_RES);
+        ledcAttach(_bluePin, ESP32_PWM_FREQ, ESP32_PWM_RES);
+      #else
+        ledcSetup(_redChannel, ESP32_PWM_FREQ, ESP32_PWM_RES);
+        ledcSetup(_greenChannel, ESP32_PWM_FREQ, ESP32_PWM_RES);
+        ledcSetup(_blueChannel, ESP32_PWM_FREQ, ESP32_PWM_RES);
+        ledcAttachPin(_redPin, _redChannel);
+        ledcAttachPin(_greenPin, _greenChannel);
+        ledcAttachPin(_bluePin, _blueChannel);
+      #endif
     #endif
-  #else
+  } else {
     pinMode(_redPin, OUTPUT);
     pinMode(_greenPin, OUTPUT);
     pinMode(_bluePin, OUTPUT);
-  #endif
-  return true;
+  }
 }
 
 uint8_t RedGreenBlueLED::_setColor(uint8_t color) {
@@ -40,15 +80,17 @@ uint8_t RedGreenBlueLED::_setColor(uint8_t color) {
 void RedGreenBlueLED::_showRGB(uint8_t red, uint8_t green, uint8_t blue) {
   _RGB[0] = red; _RGB[1] = green; _RGB[2] = blue;
 
-  #ifdef ESP32
-    ledcWrite(_redPin, _setColor(red));
-    ledcWrite(_greenPin, _setColor(green));
-    ledcWrite(_bluePin, _setColor(blue));
-  #else
+  if (_isESP32) {
+    #ifdef ESP32
+      ledcWrite(_redPin, _setColor(red));
+      ledcWrite(_greenPin, _setColor(green));
+      ledcWrite(_bluePin, _setColor(blue));
+    #endif
+  } else {
     analogWrite(_redPin, _setColor(red));
     analogWrite(_greenPin, _setColor(green));
     analogWrite(_bluePin, _setColor(blue));
-  #endif
+  }
 }
 
 void RedGreenBlueLED::setRGB(const uint8_t rgb[3]) {
@@ -115,14 +157,14 @@ void RedGreenBlueLED::setGammaCorrection(bool enabled) {
 }
 
 const uint8_t RedGreenBlueLED::_gammaTable[256] = {
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-  1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 
-  5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 9, 9, 10, 10, 10, 11, 11, 12, 12, 
-  13, 13, 14, 15, 15, 16, 16, 17, 18, 19, 19, 20, 21, 22, 23, 23, 
-  24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 40, 
-  41, 42, 43, 44, 46, 47, 48, 50, 51, 52, 54, 55, 56, 58, 59, 61, 
-  62, 64, 65, 67, 68, 70, 71, 73, 74, 76, 78, 79, 81, 83, 84, 86, 
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+  1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5,
+  5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 9, 9, 10, 10, 10, 11, 11, 12, 12,
+  13, 13, 14, 15, 15, 16, 16, 17, 18, 19, 19, 20, 21, 22, 23, 23,
+  24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 40,
+  41, 42, 43, 44, 46, 47, 48, 50, 51, 52, 54, 55, 56, 58, 59, 61,
+  62, 64, 65, 67, 68, 70, 71, 73, 74, 76, 78, 79, 81, 83, 84, 86,
   88, 90, 91, 93, 95, 97, 99,100,102,104,106,108,110,112, 114,116,
   118,120,122,124,126,128,130,132,134,136,138,141,143,145,147,149,
   152,154,156,159,161,163,166,168,170,173,175,178,180,183,185,188,
