@@ -1,5 +1,25 @@
 #include "OneLED.h"
 
+#ifdef ESP32
+  static bool _ledcChannelUsed[16] = { false };
+
+  static int8_t allocateLEDCChannel() {
+    for (int i = 0; i < 16; i++) {
+      if (!_ledcChannelUsed[i]) {
+        _ledcChannelUsed[i] = true;
+        return i;
+      }
+    }
+    return -1; // none available
+  }
+
+  static void freeLEDCChannel(int8_t ch) {
+    if (ch >= 0 && ch < 16) {
+      _ledcChannelUsed[ch] = false;
+    }
+  }
+#endif
+
 #ifndef ESP32_PWM_FREQ
   #define ESP32_PWM_FREQ 5000 // 5 kHz frequency
 #endif
@@ -8,29 +28,30 @@
   #define ESP32_PWM_RES 8 // 8-bit resolution
 #endif
 
-OneLED::OneLED(uint8_t pin, bool isPWM, bool reverse)
-  : _pin(pin), _state(false), _isPWM(isPWM), _reverse(reverse), _brightness(0) {}
+OneLED::OneLED(uint8_t pin, bool isPWM, bool reverse, bool isESP32, uint8_t channel)
+  : _pin(pin), _state(false), _isPWM(isPWM), _reverse(reverse), _brightness(0),
+  _isESP32(isESP32), _channel(channel) {}
 
-bool OneLED::begin() {
-  if (_pin < 0) { return false; }
+void OneLED::begin() {
+  if (_isESP32 && _isPWM) {
+    #ifdef ESP32
+      if (_channel < 0) {
+        _channel = allocateLEDCChannel();
+        if (_channel < 0) return;
+      }
 
-  #ifdef ESP32
-    if (_isPWM) {
       #if ESP_ARDUINO_VERSION_MAJOR >= 3
         ledcAttach(_pin, ESP32_PWM_FREQ, ESP32_PWM_RES);
       #else
-        ledcSetup(_pin, ESP32_PWM_FREQ, ESP32_PWM_RES);
-        ledcAttachPin(_pin, _pin);
+        ledcSetup(_channel, ESP32_PWM_FREQ, ESP32_PWM_RES);
+        ledcAttachPin(_pin, _channel);
       #endif
-    } else {
-      pinMode(_pin, OUTPUT);
-    }
-  #else
+    #endif
+  } else {
     pinMode(_pin, OUTPUT);
-  #endif
+  }
 
   writeRaw(_reverse ? 255 : 0);
-  return true;
 }
 
 void OneLED::on() {
@@ -95,15 +116,13 @@ void OneLED::setBrightness(uint8_t brightness) {
 uint8_t OneLED::getBrightness() const { return _brightness; }
 
 void OneLED::writeRaw(uint8_t value) {
-  #ifdef ESP32
-    if (_isPWM)
+  if (_isESP32 && _isPWM) {
+    #ifdef ESP32
       ledcWrite(_pin, value);
-    else
-      digitalWrite(_pin, value > 127 ? HIGH : LOW);
-  #else
-    if (_isPWM)
-      analogWrite(_pin, value);
-    else
-      digitalWrite(_pin, value > 127 ? HIGH : LOW);
-  #endif
+    #endif
+  } else if (_isPWM) {
+    analogWrite(_pin, value);
+  } else {
+    digitalWrite(_pin, value > 127 ? HIGH : LOW);
+  }
 }
