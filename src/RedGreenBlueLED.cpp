@@ -14,6 +14,15 @@ static int8_t allocateLEDCChannel() {
 }
 #endif
 
+
+#ifndef ESP32_PWM_FREQ
+  #define ESP32_PWM_FREQ 5000 // 5 kHz frequency
+#endif
+
+#ifndef ESP32_PWM_RES
+  #define ESP32_PWM_RES 8 // 8-bit resolution
+#endif
+
 RedGreenBlueLED::RedGreenBlueLED(
   uint8_t redPin,
   uint8_t greenPin,
