@@ -1,4 +1,4 @@
-#include "OneLDR.h"
+#include "OneSensor.h"
 
 #include <math.h>
 
