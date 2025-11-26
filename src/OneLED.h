@@ -15,6 +15,8 @@ class OneLED {
       uint8_t channel = -1
     );
 
+    ~OneLED();
+
     void begin();
     void on();
     void off();
