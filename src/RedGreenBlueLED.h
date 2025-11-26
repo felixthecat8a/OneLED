@@ -16,6 +16,8 @@ class RedGreenBlueLED {
       uint8_t blueChannel = -1
     );
 
+    ~RedGreenBlueLED();
+
     void begin();
     void setRGB(const uint8_t rgb[3]);
     void setRGB(uint8_t red, uint8_t green, uint8_t blue);

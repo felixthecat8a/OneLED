@@ -1,19 +1,24 @@
 #include "RedGreenBlueLED.h"
 
 #ifdef ESP32
-static bool _ledcChannelUsed[16] = { false };
+  static bool _ledcChannelUsed[16] = { false };
 
-static int8_t allocateLEDCChannel() {
-  for (int i = 0; i < 16; i++) {
-    if (!_ledcChannelUsed[i]) {
-      _ledcChannelUsed[i] = true;
-      return i;
+  static int8_t allocateLEDCChannel() {
+    for (int i = 0; i < 16; i++) {
+      if (!_ledcChannelUsed[i]) {
+        _ledcChannelUsed[i] = true;
+        return i;
+      }
+    }
+    return -1; // none available
+  }
+
+  static void freeLEDCChannel(int8_t ch) {
+    if (ch >= 0 && ch < 16) {
+      _ledcChannelUsed[ch] = false;
     }
   }
-  return -1; // No available channels
-}
 #endif
-
 
 #ifndef ESP32_PWM_FREQ
   #define ESP32_PWM_FREQ 5000 // 5 kHz frequency
@@ -45,6 +50,16 @@ RedGreenBlueLED::RedGreenBlueLED(
     _gammaEnabled(false)
 {
   _RGB[0] = _RGB[1] = _RGB[2] = 0;
+}
+
+RedGreenBlueLED::~RedGreenBlueLED() {
+  #ifdef ESP32
+    if (_isESP32) {
+      if (_redChannel >= 0) freeLEDCChannel(_redChannel);
+      if (_greenChannel >= 0) freeLEDCChannel(_greenChannel);
+      if (_blueChannel >= 0) freeLEDCChannel(_blueChannel);
+    }
+  #endif
 }
 
 void RedGreenBlueLED::begin() {
@@ -91,9 +106,15 @@ void RedGreenBlueLED::_showRGB(uint8_t red, uint8_t green, uint8_t blue) {
 
   if (_isESP32) {
     #ifdef ESP32
-      ledcWrite(_redPin, _setColor(red));
-      ledcWrite(_greenPin, _setColor(green));
-      ledcWrite(_bluePin, _setColor(blue));
+      #if ESP_ARDUINO_VERSION_MAJOR >= 3
+        ledcWrite(_redPin, _setColor(red));
+        ledcWrite(_greenPin, _setColor(green));
+        ledcWrite(_bluePin, _setColor(blue));
+      #else
+        ledcWrite(_redChannel, _setColor(red));
+        ledcWrite(_greenChannel, _setColor(green));
+        ledcWrite(_blueChannel, _setColor(blue));
+      #endif
     #endif
   } else {
     analogWrite(_redPin, _setColor(red));
