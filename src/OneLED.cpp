@@ -32,6 +32,15 @@ OneLED::OneLED(uint8_t pin, bool isPWM, bool isESP32, uint8_t channel)
   : _pin(pin), _state(false), _isPWM(isPWM), _activeLow(false), _brightness(0),
   _isESP32(isESP32), _channel(channel) {}
 
+OneLED::~OneLED() {
+  #ifdef ESP32
+    if (_isESP32 && _channel >= 0) {
+      freeLEDCChannel(_channel);
+      _channel = -1;
+    }
+  #endif
+}
+
 void OneLED::begin() {
   if (_isESP32 && _isPWM) {
     #ifdef ESP32
@@ -118,7 +127,11 @@ uint8_t OneLED::getBrightness() const { return _brightness; }
 void OneLED::writeRaw(uint8_t value) {
   if (_isESP32 && _isPWM) {
     #ifdef ESP32
-      ledcWrite(_pin, value);
+      #if ESP_ARDUINO_VERSION_MAJOR >= 3
+        ledcWrite(_pin, value);
+      #else
+        ledcWrite(_channel, value);
+      #endif
     #endif
   } else if (_isPWM) {
     analogWrite(_pin, value);
