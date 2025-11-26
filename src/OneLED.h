@@ -6,16 +6,11 @@
 #include "OneMoreTime.h"
 //#include "util/OneLDR.h" // component helper when ready
 
-#ifndef LED_BUILTIN
-  #define LED_BUILTIN 13
-#endif
-
 class OneLED {
   public:
     OneLED(
-      uint8_t pin = LED_BUILTIN,
+      uint8_t pin,
       bool isPWM = false,
-      bool reverse = false,
       bool isESP32 = false,
       uint8_t channel = -1
     );
@@ -36,7 +31,7 @@ class OneLED {
     void writeRaw(uint8_t value);
     uint8_t _pin;
     bool _state;
-    bool _reverse;
+    bool _activeLow;
     bool _isPWM;
     uint8_t _brightness;
     bool _isESP32;

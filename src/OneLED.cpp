@@ -28,8 +28,8 @@
   #define ESP32_PWM_RES 8 // 8-bit resolution
 #endif
 
-OneLED::OneLED(uint8_t pin, bool isPWM, bool reverse, bool isESP32, uint8_t channel)
-  : _pin(pin), _state(false), _isPWM(isPWM), _reverse(reverse), _brightness(0),
+OneLED::OneLED(uint8_t pin, bool isPWM, bool isESP32, uint8_t channel)
+  : _pin(pin), _state(false), _isPWM(isPWM), _activeLow(false), _brightness(0),
   _isESP32(isESP32), _channel(channel) {}
 
 void OneLED::begin() {
@@ -51,14 +51,14 @@ void OneLED::begin() {
     pinMode(_pin, OUTPUT);
   }
 
-  writeRaw(_reverse ? 255 : 0);
+  writeRaw(_activeLow ? 255 : 0);
 }
 
 void OneLED::on() {
   if (_isPWM) {
     setBrightness(255);
   } else {
-    digitalWrite(_pin, _reverse ? LOW : HIGH);
+    digitalWrite(_pin, _activeLow ? LOW : HIGH);
   }
   _state = true;
 }
@@ -67,7 +67,7 @@ void OneLED::off() {
   if (_isPWM) {
     setBrightness(0);
   } else {
-    digitalWrite(_pin, _reverse ? HIGH : LOW);
+    digitalWrite(_pin, _activeLow ? HIGH : LOW);
   }
   _state = false;
 }
@@ -78,13 +78,13 @@ void OneLED::toggle() {
     setBrightness(_brightness);
   } else {
     _state = !_state;
-    digitalWrite(_pin, (_state ^ _reverse) ? HIGH : LOW);
+    digitalWrite(_pin, (_state ^ _activeLow) ? HIGH : LOW);
   }
 }
 
 bool OneLED::isOn() const {
   if (_isPWM) {
-    return _reverse ? _brightness < 255 : _brightness > 0;
+    return _activeLow ? _brightness < 255 : _brightness > 0;
   }
   return _state;
 }
@@ -95,21 +95,21 @@ void OneLED::setPin(uint8_t pin) {
 }
 
 void OneLED::setReverse(bool reverse) {
-  _reverse = reverse;
+  _activeLow = reverse;
   if (_isPWM) {
     setBrightness(_brightness);
   } else {
-    digitalWrite(_pin, (_state ^ _reverse) ? HIGH : LOW);
+    digitalWrite(_pin, (_state ^ _activeLow) ? HIGH : LOW);
   }
 }
 
-bool OneLED::isReverse() const { return _reverse; }
+bool OneLED::isReverse() const { return _activeLow; }
 bool OneLED::isPWM() const { return _isPWM; }
 
 void OneLED::setBrightness(uint8_t brightness) {
   if (!_isPWM) return;
   _brightness = brightness;
-  writeRaw(_reverse ? (255 - _brightness) : _brightness);
+  writeRaw(_activeLow ? (255 - _brightness) : _brightness);
   _state = (_brightness > 0);
 }
 
