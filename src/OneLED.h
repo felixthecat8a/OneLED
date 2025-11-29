@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include "RedGreenBlueLED.h"
 #include "OneMoreTime.h"
-//#include "util/OneSensor.h" // component helper when ready
+#include "OneLDR.h"
 
 class OneLED {
   public:
