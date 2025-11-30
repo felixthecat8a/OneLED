@@ -24,6 +24,15 @@ A lightweight Arduino library for personal Arduino projects.
 
 ## Features
 
+```cpp
+#include <ComponentUtils8A.h>
+
+LED_Utils led(12); // Digital LED
+LED_Utils led(6, true); // PWMLED
+RedGreenBlueLED rgb(9, 10, 11); // RGB LED
+OneMoreTime timer(1000);
+```
+
 ### LED_Utils
 
 A minimal class to control a single digital LED or PWM-based LED with optional logic inversion.
@@ -52,3 +61,20 @@ A lightweight Arduino class for non-blocking timing based on `millis()`.
 - `restart()` and `reset()` for control
 - Configurable interval with `setInterval()`
 - Works on all boards using `millis()`
+
+## Updates
+
+### ComponentUtils8A v2.0.0
+
+New Electronic Component Utility Classes
+
+```cpp
+#include <ComponentUtils8A.h>
+
+/* New */
+Bttn_Utils button(2); // Pushbutton (Active Low)
+Knob_Utils knob(A0); // Potentiometer (Wiper on pin A0)
+LDR_Utils ldr(A1); // Photoresistor Circuit
+Thermistor_Utils temp(A2); // NTC Thermistor Circuit
+
+```
