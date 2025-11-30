@@ -1,6 +1,6 @@
-#include <OneLED.h>
+#include <ComponentUtils8A.h>
 
-OneLED fadeLED(3, true);
+LED_Utils fadeLED(3, true);
 
 const unsigned long FADE_INTERVAL = 5;
 OneMoreTime fadeTimer(FADE_INTERVAL);

@@ -1,22 +1,18 @@
-#ifndef ONE_LED_H
-#define ONE_LED_H
+#ifndef LED_UTILS_H
+#define LED_UTILS_H
 
 #include <Arduino.h>
-#include "RedGreenBlueLED.h"
-#include "OneMoreTime.h"
-#include "OneLDR.h"
-#include "OneBttn.h"
 
-class OneLED {
+class LED_Utils {
   public:
-    OneLED(
+    LED_Utils(
       uint8_t pin,
       bool isPWM = false,
       bool isESP32 = false,
       uint8_t channel = -1
     );
 
-    ~OneLED();
+    ~LED_Utils();
 
     void begin();
     void on();
@@ -25,13 +21,13 @@ class OneLED {
     bool isOn() const;
     void setPin(uint8_t pin);
     void setReverse(bool reverse);
-    bool isReverse() const;
-    bool isPWM() const;
     void setBrightness(uint8_t brightness);
-    uint8_t getBrightness() const;
+    bool isReverse() const { return _activeLow; }
+    bool isPWM() const { return _isPWM; }
+    uint8_t getBrightness() const { return _brightness; }
 
   private:
-    void writeRaw(uint8_t value);
+    void _writeRaw(uint8_t value);
     uint8_t _pin;
     bool _state;
     bool _activeLow;

@@ -1,4 +1,4 @@
-# OneLED
+# ComponentUtils8A
 
 ![GitHub Release](https://img.shields.io/github/v/release/felixthecat8a/OneLED?color=00878F)
 [![License: MIT](https://img.shields.io/github/license/felixthecat8a/OneLED)](https://opensource.org/licenses/MIT)
@@ -9,7 +9,7 @@
 ![Check Arduino](https://github.com/felixthecat8a/OneLED/actions/workflows/compile-examples.yml/badge.svg)
 ![Spell Check](https://github.com/felixthecat8a/OneLED/actions/workflows/spell-check.yml/badge.svg)
 
-A lightweight Arduino library for simple LED control.
+A lightweight Arduino library for personal Arduino projects.
 
 
 ## Installing the Library into Arduino IDE
@@ -24,7 +24,7 @@ A lightweight Arduino library for simple LED control.
 
 ## Features
 
-### OneLED
+### LED_Utils
 
 A minimal class to control a single digital LED or PWM-based LED with optional logic inversion.
 

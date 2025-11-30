@@ -2,13 +2,14 @@
 # Classes and Data Types
 ##################################
 
-OneLED  KEYWORD1
+ComponentUtils8A  KEYWORD1
+LED_Utils KEYWORD1
 RedGreenBlueLED  KEYWORD1
 RedGreenBlue  KEYWORD1
 OneMoreTime  KEYWORD1
 
 ##################################
-# OneLED Methods
+# LED_Utils Methods
 ##################################
 
 begin  KEYWORD2

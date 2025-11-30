@@ -1,4 +1,4 @@
-#include "OneLED.h"
+#include "LED_Utils.h"
 
 #ifdef ESP32
   static bool _ledcChannelUsed[16] = { false };
@@ -28,11 +28,11 @@
   #define ESP32_PWM_RES 8 // 8-bit resolution
 #endif
 
-OneLED::OneLED(uint8_t pin, bool isPWM, bool isESP32, uint8_t channel)
+LED_Utils::LED_Utils(uint8_t pin, bool isPWM, bool isESP32, uint8_t channel)
   : _pin(pin), _state(false), _isPWM(isPWM), _activeLow(false), _brightness(0),
   _isESP32(isESP32), _channel(channel) {}
 
-OneLED::~OneLED() {
+LED_Utils::~LED_Utils() {
   #ifdef ESP32
     if (_isESP32 && _channel >= 0) {
       freeLEDCChannel(_channel);
@@ -41,7 +41,7 @@ OneLED::~OneLED() {
   #endif
 }
 
-void OneLED::begin() {
+void LED_Utils::begin() {
   if (_isESP32 && _isPWM) {
     #ifdef ESP32
       if (_channel < 0) {
@@ -60,10 +60,10 @@ void OneLED::begin() {
     pinMode(_pin, OUTPUT);
   }
 
-  writeRaw(_activeLow ? 255 : 0);
+  _writeRaw(_activeLow ? 255 : 0);
 }
 
-void OneLED::on() {
+void LED_Utils::on() {
   if (_isPWM) {
     setBrightness(255);
   } else {
@@ -72,7 +72,7 @@ void OneLED::on() {
   _state = true;
 }
 
-void OneLED::off() {
+void LED_Utils::off() {
   if (_isPWM) {
     setBrightness(0);
   } else {
@@ -81,7 +81,7 @@ void OneLED::off() {
   _state = false;
 }
 
-void OneLED::toggle() {
+void LED_Utils::toggle() {
   if (_isPWM) {
     _brightness = _state ? 0 : 255;
     setBrightness(_brightness);
@@ -91,19 +91,19 @@ void OneLED::toggle() {
   }
 }
 
-bool OneLED::isOn() const {
+bool LED_Utils::isOn() const {
   if (_isPWM) {
     return _activeLow ? _brightness < 255 : _brightness > 0;
   }
   return _state;
 }
 
-void OneLED::setPin(uint8_t pin) {
+void LED_Utils::setPin(uint8_t pin) {
   _pin = pin;
   begin();
 }
 
-void OneLED::setReverse(bool reverse) {
+void LED_Utils::setReverse(bool reverse) {
   _activeLow = reverse;
   if (_isPWM) {
     setBrightness(_brightness);
@@ -112,19 +112,14 @@ void OneLED::setReverse(bool reverse) {
   }
 }
 
-bool OneLED::isReverse() const { return _activeLow; }
-bool OneLED::isPWM() const { return _isPWM; }
-
-void OneLED::setBrightness(uint8_t brightness) {
+void LED_Utils::setBrightness(uint8_t brightness) {
   if (!_isPWM) return;
   _brightness = brightness;
-  writeRaw(_activeLow ? (255 - _brightness) : _brightness);
+  _writeRaw(_activeLow ? (255 - _brightness) : _brightness);
   _state = (_brightness > 0);
 }
 
-uint8_t OneLED::getBrightness() const { return _brightness; }
-
-void OneLED::writeRaw(uint8_t value) {
+void LED_Utils::_writeRaw(uint8_t value) {
   if (_isESP32 && _isPWM) {
     #ifdef ESP32
       #if ESP_ARDUINO_VERSION_MAJOR >= 3
