@@ -94,9 +94,9 @@ protected:
   }
 };
 
-class OneKnob : public AnalogIn {
+class KnobUtils : public AnalogIn {
 public:
-  OneKnob(uint8_t pin) : AnalogIn(pin) {}
+  KnobUtils(uint8_t pin) : AnalogIn(pin) {}
 
   void begin(int resolutionADC = 10) override {
       AnalogIn::begin(resolutionADC);
@@ -127,9 +127,9 @@ public:
 
 /* GND >> 10kohm Resistor >> A1 >> Photoresistor >> 5V */
 
-class OneLDR : public AnalogIn {
+class LDR_Utils : public AnalogIn {
 public:
-  OneLDR(uint8_t pin, float rFixed = 10000.0, float vRef = 5.0, float luxCoeff = 500.0)
+  LDR_Utils(uint8_t pin, float rFixed = 10000.0, float vRef = 5.0, float luxCoeff = 500.0)
     : AnalogIn(pin), _rFixed(rFixed), _vRef(vRef), _luxCoeff(luxCoeff) {}
 
   void begin(int resolutionADC = 10) override {
@@ -164,9 +164,9 @@ private:
 
 /* GND >> NTC Thermistor >> A2 >> 10kohm Resistor >> 5V */
 
-class OneThermistor : public AnalogIn {
+class ThermistorUtils : public AnalogIn {
 public:
-  OneThermistor(uint8_t pin, float r25, float beta, float rPullup = 10000.0, float vRef = 5.0)
+  ThermistorUtils(uint8_t pin, float r25, float beta, float rPullup = 10000.0, float vRef = 5.0)
     : AnalogIn(pin), _r25(r25), _beta(beta), _rPullup(rPullup), _vRef(vRef) {}
 
   void begin(int resolutionADC = 10) override {

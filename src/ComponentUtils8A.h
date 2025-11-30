@@ -2,10 +2,9 @@
 #define COMPONENT_UTILS_H
 
 #include "LED_Utils.h"
-
 #include "RedGreenBlueLED.h"
 #include "OneMoreTime.h"
-#include "OneLDR.h"
-#include "OneBttn.h"
+#include "BttnUtils.h"
+#include "AnalogUtils.h"
 
 #endif

@@ -131,11 +131,6 @@ void RedGreenBlueLED::setRGB(uint8_t red, uint8_t green, uint8_t blue) {
   _showRGB(red, green, blue);
 }
 
-const uint8_t* RedGreenBlueLED::getRGB() const { return _RGB; }
-const uint8_t RedGreenBlueLED::getRed() const { return _RGB[0]; }
-const uint8_t RedGreenBlueLED::getGreen() const { return _RGB[1]; }
-const uint8_t RedGreenBlueLED::getBlue() const { return _RGB[2]; }
-
 void RedGreenBlueLED::setHex(uint32_t hex) {
   _showRGB((hex >> 16) & 0xFF, (hex >> 8) & 0xFF, hex & 0xFF);
 }
@@ -153,10 +148,6 @@ String RedGreenBlueLED::getHexString() const {
 void RedGreenBlueLED::setBrightness(uint8_t brightness) {
   _brightness = constrain(brightness, 0, 255);
   _showRGB(_RGB[0], _RGB[1], _RGB[2]);
-}
-
-const uint8_t RedGreenBlueLED::getBrightness() const {
-  return _brightness;
 }
 
 void RedGreenBlueLED::setHSV(int hue, float sat, float val) {
@@ -203,21 +194,6 @@ const uint8_t RedGreenBlueLED::_gammaTable[256] = {
   255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
   255,255,255,255,255,255,255,255,255,255,255,255,255,255
 };
-
-void RedGreenBlueLED::off() { setRGB(RedGreenBlue::BLACK); }
-void RedGreenBlueLED::setWhite() { setRGB(RedGreenBlue::WHITE); }
-void RedGreenBlueLED::setPink() { setRGB(RedGreenBlue::HOTPINK); }
-void RedGreenBlueLED::setRed() { setRGB(RedGreenBlue::RED); }
-void RedGreenBlueLED::setOrange() { setRGB(RedGreenBlue::ORANGE); }
-void RedGreenBlueLED::setYellow() { setRGB(RedGreenBlue::YELLOW); }
-void RedGreenBlueLED::setLime() { setRGB(RedGreenBlue::LIMEGREEN); }
-void RedGreenBlueLED::setGreen() { setRGB(RedGreenBlue::GREEN); }
-void RedGreenBlueLED::setSpring() { setRGB(RedGreenBlue::SPRING); }
-void RedGreenBlueLED::setCyan() { setRGB(RedGreenBlue::CYAN); }
-void RedGreenBlueLED::setSky() { setRGB(RedGreenBlue::SKYBLUE); }
-void RedGreenBlueLED::setBlue() { setRGB(RedGreenBlue::BLUE); }
-void RedGreenBlueLED::setViolet() { setRGB(RedGreenBlue::VIOLET); }
-void RedGreenBlueLED::setMagenta() { setRGB(RedGreenBlue::MAGENTA); }
 
 void RedGreenBlueLED::setCMYK(float cyan, float magenta, float yellow, float key) {
   cyan = constrain(cyan, 0.0f, 1.0f);

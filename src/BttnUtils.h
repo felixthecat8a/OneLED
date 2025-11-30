@@ -1,11 +1,11 @@
-#ifndef ONE_BTTN_H
-#define ONE_BTTN_H
+#ifndef BTTN_UTILS_H
+#define BTTN_UTILS_H
 
 #include <Arduino.h>
 
-class Button {
+class BttnUtils {
 public:
-  Button(uint8_t pin, bool activeLow = true, uint16_t debounceTime = 50);
+  BttnUtils(uint8_t pin, bool activeLow = true, uint16_t debounceTime = 50);
 
   bool begin();
   void update();
@@ -47,4 +47,4 @@ private:
   bool _lastReading;
 };
 
-#endif
+#endif // BTTN_UTILS_H
