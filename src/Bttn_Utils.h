@@ -3,9 +3,9 @@
 
 #include <Arduino.h>
 
-class BttnUtils {
+class Bttn_Utils {
 public:
-  BttnUtils(uint8_t pin, bool activeLow = true, uint16_t debounceTime = 50);
+  Bttn_Utils(uint8_t pin, bool activeLow = true, uint16_t debounceTime = 50);
 
   bool begin();
   void update();

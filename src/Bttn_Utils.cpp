@@ -1,19 +1,19 @@
-#include "BttnUtils.h"
+#include "Bttn_Utils.h"
 
-BttnUtils::BttnUtils(uint8_t pin, bool activeLow, uint16_t debounceTime)
+Bttn_Utils::Bttn_Utils(uint8_t pin, bool activeLow, uint16_t debounceTime)
   : _pin(pin), _activeLow(activeLow), _debounceTime(debounceTime),
     _holdTime(1000), _doubleClickTime(250), _state(BUTTON_IDLE),
     _pressedEvent(false), _releasedEvent(false), _heldEvent(false),
     _doubleClickEvent(false), _lastDebounceTime(0), _pressedTime(0),
     _lastReleaseTime(0), _lastReading(!activeLow) {}
 
-bool BttnUtils::begin() {
+bool Bttn_Utils::begin() {
   if (_pin < 0) return false;
   pinMode(_pin, _activeLow ? INPUT_PULLUP : INPUT);
   return true;
 }
 
-void BttnUtils::update() {
+void Bttn_Utils::update() {
   bool reading = digitalRead(_pin);
   if (_activeLow) reading = !reading;
 
@@ -80,11 +80,11 @@ void BttnUtils::update() {
   _lastReading = reading;
 }
 
-bool BttnUtils::isPressed() const {
+bool Bttn_Utils::isPressed() const {
   return _lastReading;
 }
 
-bool BttnUtils::wasPressed() {
+bool Bttn_Utils::wasPressed() {
   if (_pressedEvent) {
     _pressedEvent = false;
     return true;
@@ -92,7 +92,7 @@ bool BttnUtils::wasPressed() {
   return false;
 }
 
-bool BttnUtils::wasReleased() {
+bool Bttn_Utils::wasReleased() {
   if (_releasedEvent) {
     _releasedEvent = false;
     return true;
@@ -100,7 +100,7 @@ bool BttnUtils::wasReleased() {
   return false;
 }
 
-bool BttnUtils::wasHeld() {
+bool Bttn_Utils::wasHeld() {
   if (_heldEvent) {
     _heldEvent = false;
     return true;
@@ -108,7 +108,7 @@ bool BttnUtils::wasHeld() {
   return false;
 }
 
-bool BttnUtils::wasDoubleClicked() {
+bool Bttn_Utils::wasDoubleClicked() {
   if (_doubleClickEvent) {
     _doubleClickEvent = false;
     return true;
@@ -116,14 +116,14 @@ bool BttnUtils::wasDoubleClicked() {
   return false;
 }
 
-void BttnUtils::setHoldTime(uint16_t ms) {
+void Bttn_Utils::setHoldTime(uint16_t ms) {
   _holdTime = ms;
 }
 
-void BttnUtils::setDoubleClickTime(uint16_t ms) {
+void Bttn_Utils::setDoubleClickTime(uint16_t ms) {
   _doubleClickTime = ms;
 }
 
-bool BttnUtils::isWaitingForDoubleClick() const {
+bool Bttn_Utils::isWaitingForDoubleClick() const {
   return _state == BUTTON_WAITING_DOUBLE;
 }

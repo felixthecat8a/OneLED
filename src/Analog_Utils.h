@@ -94,9 +94,9 @@ protected:
   }
 };
 
-class KnobUtils : public AnalogIn {
+class Knob_Utils : public AnalogIn {
 public:
-  KnobUtils(uint8_t pin) : AnalogIn(pin) {}
+  Knob_Utils(uint8_t pin) : AnalogIn(pin) {}
 
   void begin(int resolutionADC = 10) override {
       AnalogIn::begin(resolutionADC);
@@ -164,9 +164,9 @@ private:
 
 /* GND >> NTC Thermistor >> A2 >> 10kohm Resistor >> 5V */
 
-class ThermistorUtils : public AnalogIn {
+class Thermistor_Utils : public AnalogIn {
 public:
-  ThermistorUtils(uint8_t pin, float r25, float beta, float rPullup = 10000.0, float vRef = 5.0)
+  Thermistor_Utils(uint8_t pin, float r25, float beta, float rPullup = 10000.0, float vRef = 5.0)
     : AnalogIn(pin), _r25(r25), _beta(beta), _rPullup(rPullup), _vRef(vRef) {}
 
   void begin(int resolutionADC = 10) override {

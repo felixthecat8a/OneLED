@@ -4,7 +4,7 @@
 #include "LED_Utils.h"
 #include "RedGreenBlueLED.h"
 #include "OneMoreTime.h"
-#include "BttnUtils.h"
-#include "AnalogUtils.h"
+#include "Bttn_Utils.h"
+#include "Analog_Utils.h"
 
 #endif
