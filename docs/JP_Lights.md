@@ -4,6 +4,7 @@ I'm working on a project to control a WS2812 LED string using an Arduino Nano Ev
 The goal is to use a control box with a push button to change colors and modes.
 This is my sketch using the 'ComponentUtils8A' library.
 
+
 ## Setup
 
 ```cpp
@@ -43,9 +44,9 @@ void saveSettings() {
 ```cpp
 #define NUM_COLOR_OPTIONS 12
 int COLOR_RGB[NUM_COLOR_OPTIONS][3] = {
-   {250, 10, 10}, {250, 127, 10}, {250, 250, 10}, {127, 250, 10}, 
-  {10, 250, 0}, {10, 250, 127}, {10, 250, 250}, {10, 127, 250}, 
-  {10, 10, 250}, {127, 10, 250},  {250, 10, 250},{250, 10, 127},
+  { 250, 0, 0 }, { 250, 127, 0 }, { 250, 250, 0 }, { 127, 250, 0 }, 
+  { 0, 250, 0 }, { 0, 250, 127 }, { 0, 250, 250 }, { 0, 127, 250 }, 
+  { 0, 0, 250 }, { 127, 0, 250 }, { 250, 0, 250 }, { 250, 0, 127 },
 };
 const char* COLOR_NAME[NUM_COLOR_OPTIONS] = {
   "Red", "Orange", "Yellow", "LimeGreen",
@@ -153,30 +154,16 @@ void loop() {
 ## Christmas Tree Light Color Animations
 Working on some Christmas Tree string light animations.
 
-### Typical Christmas Tree Light Color Options
+> Typical Christmas Tree Light Color Options: Red, Amber, Green & Blue
 
 ```cpp
 const uint32_t TREE_LIGHT_COLORS[] = {
   strip.Color(255, 0, 0),
-  strip.Color(0, 255, 0),
   strip.Color(255, 180, 0),
+  strip.Color(0, 255, 0),
   strip.Color(0, 0, 255)
 };
 const int NUM_TREE_LIGHT_COLORS = 4;
-```
-
-### Custom Light Color Options
-
-```cpp
-const uint32_t LIGHT_COLORS[] = {
-  strip.Color(255, 0, 0),
-  strip.Color(255, 255, 0),
-  strip.Color(0, 255, 0),
-  strip.Color(0, 255, 255),
-  strip.Color(0, 0, 255),
-  strip.Color(255, 0, 255)
-};
-const int NUM_LIGHT_COLORS = 6;
 
 struct ColorLight {
   int pixel;
@@ -187,19 +174,33 @@ struct ColorLight {
 
 #define NUM_LIGHTS 20
 ColorLight lights[NUM_LIGHTS];
+```
 
+> Initial Variables
+
+```cpp
 unsigned long lastLightsUpdate = 0;
 unsigned long lightInterval = 20;
+```
 
+> Initiate Animation in `setup()`
+
+```cpp
 void setupChristmasTreeLights() {
   for (int i = 0; i < NUM_LIGHTS; i++) {
     lights[i].pixel = random(strip.numPixels());
     lights[i].brightness = random(0, 255);
     lights[i].direction = random(0, 2) * 2 - 1; // -1 or 1
-    lights[i].colorIndex = random(NUM_LIGHT_COLORS);
+    lights[i].colorIndex = random(NUM_TREE_LIGHT_COLORS);
   }
 }
+```
 
+> Run Animation in `loop()`
+
+- TODO: Apply `ComponentUtils8A` Library
+
+```cpp
 void updateChristmasTreeLights() {
   unsigned long now = millis();
   if (now - lastLightsUpdate < lightInterval) return;
@@ -217,12 +218,12 @@ void updateChristmasTreeLights() {
     }
     if (light.brightness <= 0) {
       light.pixel = random(strip.numPixels());
-      light.colorIndex = random(NUM_LIGHT_COLORS);
+      light.colorIndex = random(NUM_TREE_LIGHT_COLORS);
       light.direction = 1;
       light.brightness = 0;
     }
 
-    uint32_t c = LIGHT_COLORS[light.colorIndex];
+    uint32_t c = TREE_LIGHT_COLORS[light.colorIndex];
 
     uint8_t r = ((c >> 16) & 0xFF) * light.brightness / 255;
     uint8_t g = ((c >> 8) & 0xFF) * light.brightness / 255;
