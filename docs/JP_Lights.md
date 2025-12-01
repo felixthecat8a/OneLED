@@ -1,6 +1,7 @@
 # Project JP Lights
 
 I'm working on a project to control a WS2812 LED string using an Arduino Nano Every.
+The goal is to use a control box with a push button to shange colors and modes.
 This is my sketch using the 'ComponentUtils8A' library.
 
 ## Setup
