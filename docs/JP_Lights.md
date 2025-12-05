@@ -1,10 +1,10 @@
 # Project JP Lights
 
-Project JP Lights was a project to control a WS2812 LED string using an Arduino Nano Every.
-The goal was to create a control box with a push button to change colors and modes.
-The control box was designed on tinkercad, downloaded as STL files and 3D printed.
-This is my sketch using the 'ComponentUtils8A' library.
+Project JP Lights is an LED-control project built around an Arduino Nano Every and a WS2812 LED string.
+The goal was to design a control box with a pushbutton that cycles through multiple lighting modes and colors.
 
+The enclosure was designed in Tinkercad, exported as STL files, and 3D-printed.
+This sketch uses the `ComponentUtils8A` library for handling input timing and animation.
 
 ## Setup
 
@@ -47,7 +47,7 @@ void saveSettings() {
 
 ## Color Array and Functions
 
-This was a wide range of colors that I first used to try out the LEDs. 
+Originally, the project used a 12-color palette and later simplified to four classic Christmas-light colors.
 
 ```cpp
 #define NUM_COLOR_OPTIONS 12
@@ -64,7 +64,7 @@ const char* COLOR_NAME[NUM_COLOR_OPTIONS] = {
 };
 ```
 
-### LED Color Functions
+### LED Display Mode Functions
 
 ```cpp
 #define NUM_COLOR_OPTIONS 12
@@ -159,9 +159,6 @@ void updateArrayColorChase(int c) {
 }
 ```
 
-
-
-
 ## Main
 
 ```cpp
@@ -219,7 +216,7 @@ Working on some Christmas Tree string light animations.
 ```cpp
 const uint32_t TREE_LIGHT_COLORS[] = {
   strip.Color(255, 0, 0),
-  strip.Color(255, 180, 0),
+  strip.Color(255, 191, 0),
   strip.Color(0, 255, 0),
   strip.Color(0, 0, 255)
 };
@@ -258,8 +255,6 @@ void setupChristmasTreeLights() {
 
 > Run Animation in `loop()`
 
-- TODO: Apply `ComponentUtils8A` Library
-
 ```cpp
 void updateChristmasTreeLights() {
   unsigned long now = millis();
@@ -295,3 +290,6 @@ void updateChristmasTreeLights() {
   strip.show();
 }
 ```
+
+- TODO: Apply `ComponentUtils8A` Library
+- 
