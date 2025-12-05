@@ -1,7 +1,8 @@
 # Project JP Lights
 
-I'm working on a project to control a WS2812 LED string using an Arduino Nano Every.
-The goal is to use a control box with a push button to change colors and modes.
+Project JP Lights was a project to control a WS2812 LED string using an Arduino Nano Every.
+The goal was to create a control box with a push button to change colors and modes.
+The control box was designed on tinkercad, downloaded as STL files and 3D printed.
 This is my sketch using the 'ComponentUtils8A' library.
 
 
@@ -11,28 +12,33 @@ This is my sketch using the 'ComponentUtils8A' library.
 #include <Adafruit_NeoPixel.h>
 #include <EEPROM.h>
 #include <ComponentUtils8A.h>
-/******************** NeoPixel Setup ********************/
+
+/* NeoPixel Setup */
 #define DATA_PIN A0
 #define NUM_PIXELS 91
 Adafruit_NeoPixel strip(NUM_PIXELS, DATA_PIN, NEO_RGB + NEO_KHZ800);
-/******************** EEPROM  Setup ********************/
-#define EEPROM_MODE_ADDR 0
-#define EEPROM_COLOR_ADDR 1
-/******************** Button Setup ********************/
+
+/* Button Setup */
 #define BUTTON_PIN 2
 Bttn_Utils button(BUTTON_PIN, true, 50);
-/**************** Mode & Color Initial Variables ****************/
+
+/* Mode & Color Initial Variables */
 int currentMode = 0;
 const int maxModes = 3;
 int colorIndex = 0;
 const int numColors = 12;
-/******************** EEPROM Functions ********************/
+
+/* EEPROM  Setup */
+#define EEPROM_MODE_ADDR 0
+#define EEPROM_COLOR_ADDR 1
+
 void loadSettings() {
   EEPROM.get(EEPROM_MODE_ADDR, currentMode);
   EEPROM.get(EEPROM_COLOR_ADDR, colorIndex);
   if (currentMode < 0 || currentMode > maxModes) currentMode = 0;
   if (colorIndex < 0 || colorIndex >= numColors) colorIndex = 0;
 }
+
 void saveSettings() {
   EEPROM.update(EEPROM_MODE_ADDR, currentMode);
   EEPROM.update(EEPROM_COLOR_ADDR, colorIndex);
@@ -40,6 +46,8 @@ void saveSettings() {
 ```
 
 ## Color Array and Functions
+
+This was a wide range of colors that I first used to try out the LEDs. 
 
 ```cpp
 #define NUM_COLOR_OPTIONS 12
@@ -52,6 +60,20 @@ const char* COLOR_NAME[NUM_COLOR_OPTIONS] = {
   "Red", "Orange", "Yellow", "LimeGreen",
   "Green", "SpringGreen", "Cyan", "SkyBlue",
   "Blue", "Purple", "Magenta", "Pink", 
+};
+```
+
+### LED Color Functions
+
+```cpp
+#define NUM_COLOR_OPTIONS 12
+
+int COLOR_RGB[NUM_COLOR_OPTIONS][3] = {
+  { 250, 0, 0 }, {255, 191, 0}, { 0, 250, 0 }, { 0, 0, 250 }
+};
+
+const char* COLOR_NAME[NUM_COLOR_OPTIONS] = {
+  "Red", "Amber", "Green", "Blue"
 };
 
 void setArrayColor(int c) {
@@ -81,14 +103,18 @@ void setOff() {
   }
   strip.show();
 }
+```
 
+### LED Color Chase Animation Function
+
+```cpp
 const unsigned long ANIMATION_INTERVAL = 150;
-OneMoreTime animationTimer(ANIMATION_INTERVAL);
+OneMoreTime chaseTimer(ANIMATION_INTERVAL);
 
 void updateArrayColorChase(int c) {
-  animationTimer.update();
+  chaseTimer.update();
   static int animationStep = 0;
-  if(animationTimer.tick()) {
+  if(chaseTimer.tick()) {
     for (int i = 0; i < strip.numPixels(); i++) {
       if ((i + animationStep) % 3 == 0) {
         strip.setPixelColor(i,COLOR_RGB[c][0],COLOR_RGB[c][1],COLOR_RGB[c][2]);
