@@ -18,9 +18,12 @@ This sketch uses the `ComponentUtils8A` library for handling input timing and an
 #define NUM_PIXELS 91
 Adafruit_NeoPixel strip(NUM_PIXELS, DATA_PIN, NEO_RGB + NEO_KHZ800);
 
-/* Button Setup */
+/* Button & Timer Setup */
 #define BUTTON_PIN 2
 Bttn_Utils button(BUTTON_PIN, true, 50);
+
+const unsigned long ANIMATION_INTERVAL = 150;
+OneMoreTime chaseTimer(ANIMATION_INTERVAL);
 
 /* Mode & Color Initial Variables */
 int currentMode = 0;
@@ -70,7 +73,7 @@ const char* COLOR_NAME[NUM_COLOR_OPTIONS] = {
 #define NUM_COLOR_OPTIONS 12
 
 int COLOR_RGB[NUM_COLOR_OPTIONS][3] = {
-  { 250, 0, 0 }, {255, 75, 0}, { 0, 250, 0 }, { 0, 0, 250 }
+  { 250, 0, 0 }, { 255, 75, 0 }, { 0, 250, 0 }, { 0, 0, 250 }
 };
 
 const char* COLOR_NAME[NUM_COLOR_OPTIONS] = {
@@ -109,39 +112,6 @@ void setOff() {
 ## LED Color Chase Animation Function
 
 ```cpp
-struct ArrayColorChase {
-  unsigned long lastUpdate = 0;
-  unsigned long interval = 210;
-  int offset = 0;
-};
-
-ArrayColorChase chase;
-
-void updateArrayColorChase(int c) {
-  static int animationStep = 0;
-  if (millis() - chase.lastUpdate < chase.interval) return;
-  chase.lastUpdate = millis();
-
-  chase.offset++;
-
-  for (int i = 0; i < strip.numPixels(); i++) {
-    if ((i + animationStep) % 3 == 0) {
-      strip.setPixelColor(i,COLOR_RGB[c][0],COLOR_RGB[c][1],COLOR_RGB[c][2]);
-    } else {
-      strip.setPixelColor(i,127,127,127);
-    }
-  }
-  strip.show();
-  animationStep = (animationStep + 1) % 3;
-}
-```
-
-### Using the `OneMoreTime` class from the `ComponentUtils8A` library:
-
-```cpp
-const unsigned long ANIMATION_INTERVAL = 150;
-OneMoreTime chaseTimer(ANIMATION_INTERVAL);
-
 void updateArrayColorChase(int c) {
   chaseTimer.update();
   static int animationStep = 0;
