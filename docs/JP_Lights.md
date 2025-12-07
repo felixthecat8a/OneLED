@@ -70,7 +70,7 @@ const char* COLOR_NAME[NUM_COLOR_OPTIONS] = {
 #define NUM_COLOR_OPTIONS 12
 
 int COLOR_RGB[NUM_COLOR_OPTIONS][3] = {
-  { 250, 0, 0 }, {255, 191, 0}, { 0, 250, 0 }, { 0, 0, 250 }
+  { 250, 0, 0 }, {255, 75, 0}, { 0, 250, 0 }, { 0, 0, 250 }
 };
 
 const char* COLOR_NAME[NUM_COLOR_OPTIONS] = {
