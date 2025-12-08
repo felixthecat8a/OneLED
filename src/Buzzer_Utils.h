@@ -49,4 +49,48 @@ class PassiveBuzzer_Utils {
 
 };
 
+class ActiveBuzzer_Utils {
+  public:
+    ActiveBuzzer_Utils(uint8_t pin)
+      : _pin(pin), _isBeeping(false), _beepFreq(0), _beepDuration(0), _beepStart(0)
+    {}
+
+    void toneOn(unsigned int freq) {
+      tone(_pin, freq);
+    }
+
+    void toneOff() {
+      noTone(_pin);
+    }
+
+    void beep(unsigned int freq, unsigned long duration) {
+      tone(_pin, freq);
+
+      _isBeeping = true;
+      _beepFreq = freq;
+      _beepDuration = duration;
+      _beepStart = millis();
+    }
+
+    bool isBeeping() const { return _isBeeping; }
+
+    void update() {
+      if (_isBeeping) {
+        if (millis() - _beepStart >= _beepDuration) {
+          noTone(_pin);
+          _isBeeping = false;
+        }
+      }
+    }
+
+  private:
+    uint8_t _pin;
+
+    bool _isBeeping;
+    unsigned int _beepFreq;
+    unsigned long _beepDuration;
+    unsigned long _beepStart;
+
+};
+
 #endif
