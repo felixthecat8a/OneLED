@@ -284,5 +284,4 @@ class Phototransistor_Utils : public AnalogIn {
     Calibration _cal;
 };
 
-
 #endif
