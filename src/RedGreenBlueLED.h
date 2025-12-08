@@ -38,7 +38,7 @@ class RedGreenBlueLED {
     void begin();
     void setRGB(const uint8_t rgb[3]);
     void setRGB(uint8_t red, uint8_t green, uint8_t blue);
-    uint8_t* getRGB() const { return _RGB; }
+    const uint8_t* getRGB() const { return _RGB; }
     uint8_t getRed() const { return _RGB[0]; }
     uint8_t getGreen() const { return _RGB[1]; }
     uint8_t getBlue() const { return _RGB[2]; }
