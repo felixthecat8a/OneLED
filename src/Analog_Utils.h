@@ -47,7 +47,7 @@ public:
   }
 
   virtual int readMapped(int minOut, int maxOut) const {
-    int raw = constrain(readRaw(), 0, _scaleADC);
+    int raw = constrain(readRaw(), 0, (int)_scaleADC);
     return map(raw, 0, _scaleADC, minOut, maxOut);
   }
 
