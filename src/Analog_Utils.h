@@ -1,5 +1,5 @@
-#ifndef ONE_LDR_H
-#define ONE_LDR_H
+#ifndef ANALOG_UTILS_H
+#define ANALOG_UTILS_H
 
 #include <Arduino.h>
 
@@ -227,5 +227,62 @@ private:
   static constexpr float GREEN_HUE = 120.0;
   static constexpr float HUE_SHIFT_RANGE = 120.0;
 };
+
+/* GND >> 10kohm Resistor >> A# >> (Emitter) Phototransistor (Collector) >> 5V */
+
+class Phototransistor_Utils : public AnalogIn {
+  public:
+    struct Calibration { float scale; float offset; };
+
+    Phototransistor_Utils(uint8_t pin, float vRef = 5.0f, float scale = 1.0f, float offset = 0.0f)
+      : AnalogInput(pin), _vRef(vRef), _inverted(false), _cal{ scale, offset } {}
+
+    void begin(int resolutionADC = 10) override {
+      AnalogInput::begin(resolutionADC);
+    }
+
+    void update() override {
+      AnalogInput::update();
+    }
+
+    float getVoltage() const {
+      float v = readNormalized() * _vRef;
+      return _inverted ? (_vRef - v) : v;
+    }
+
+    float getSmoothedVoltage() const {
+      float v = readNormalizedSmoothed() * _vRef;
+      return _inverted ? (_vRef - v) : v;
+    }
+
+    float getLevel() const {
+      return (getVoltage() * _cal.scale) + _cal.offset;
+    }
+
+    float getLevelSmoothed() const {
+      return (getSmoothedVoltage() * _cal.scale) + _cal.offset;
+    }
+
+    // float getPercentage() const { return (getVoltage() / _vRef) * 100.0f; }
+    // float getPercentageSmoothed() const { return (getSmoothedVoltage() / _vRef) * 100.0f; }
+
+    float getPercentage() const { return readNormalized() * 100.0f; }
+    float getPercentageSmoothed() const { return readNormalizedSmoothed() * 100.0f; }
+
+    void setCalibration(float scale, float offset = 0.0f) {
+      _cal.scale = scale;
+      _cal.offset = offset;
+    }
+
+    void setInverted(bool inv) {
+      _inverted = inv;
+    }
+
+  private:
+    float _vRef;
+    bool _inverted;
+    Calibration _cal;
+};
+
 
 #endif

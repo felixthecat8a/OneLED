@@ -6,5 +6,6 @@
 #include "OneMoreTime.h"
 #include "Bttn_Utils.h"
 #include "Analog_Utils.h"
+#include "Buzzer_Utils.h"
 
 #endif
