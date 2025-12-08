@@ -38,15 +38,15 @@ class RedGreenBlueLED {
     void begin();
     void setRGB(const uint8_t rgb[3]);
     void setRGB(uint8_t red, uint8_t green, uint8_t blue);
-    const uint8_t* getRGB() const { return _RGB; }
-    const uint8_t getRed() const { return _RGB[0]; }
-    const uint8_t getGreen() const { return _RGB[1]; }
-    const uint8_t getBlue() const { return _RGB[2]; }
+    uint8_t* getRGB() const { return _RGB; }
+    uint8_t getRed() const { return _RGB[0]; }
+    uint8_t getGreen() const { return _RGB[1]; }
+    uint8_t getBlue() const { return _RGB[2]; }
     void setHex(uint32_t hex);
-    const uint32_t getHex() const;
+    uint32_t getHex() const;
     String getHexString() const;
     void setBrightness(uint8_t brightness);
-    const uint8_t getBrightness() const { return _brightness; }
+    uint8_t getBrightness() const { return _brightness; }
     void setHSV(int hue, float sat = 1.0, float val = 1.0);
     void setGammaCorrection(bool enabled);
     void off() { setRGB(RedGreenBlue::BLACK); }
