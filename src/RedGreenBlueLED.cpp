@@ -135,7 +135,7 @@ void RedGreenBlueLED::setHex(uint32_t hex) {
   _showRGB((hex >> 16) & 0xFF, (hex >> 8) & 0xFF, hex & 0xFF);
 }
 
-const uint32_t RedGreenBlueLED::getHex() const {
+uint32_t RedGreenBlueLED::getHex() const {
   return ((uint32_t)_RGB[0] << 16) | ((uint32_t)_RGB[1] << 8) | (uint32_t)_RGB[2];
 }
 
