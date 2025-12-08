@@ -3,9 +3,9 @@
 
 #include <Arduino.h>
 
-class PassiveBuzzer_Utils {
+class ActiveBuzzer_Utils {
   public:
-    PassiveBuzzer_Utils(uint8_t pin)
+    ActiveBuzzer_Utils(uint8_t pin)
       : _pin(pin), _isBeeping(false), _beepDuration(0), _beepStart(0) {}
 
     void begin() {
@@ -49,9 +49,9 @@ class PassiveBuzzer_Utils {
 
 };
 
-class ActiveBuzzer_Utils {
+class PassiveBuzzer_Utils {
   public:
-    ActiveBuzzer_Utils(uint8_t pin)
+    PassiveBuzzer_Utils(uint8_t pin)
       : _pin(pin), _isBeeping(false), _beepFreq(0), _beepDuration(0), _beepStart(0)
     {}
 
