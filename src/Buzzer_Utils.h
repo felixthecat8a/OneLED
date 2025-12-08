@@ -3,6 +3,12 @@
 
 #include <Arduino.h>
 
+// Boards that do NOT support tone():
+// - Arduino Due (ARDUINO_ARCH_SAM)
+#if defined(ARDUINO_ARCH_SAM)
+  #define COMPONENTUTILS8A_NO_TONE
+#endif
+
 class ActiveBuzzer_Utils {
   public:
     ActiveBuzzer_Utils(uint8_t pin)
@@ -56,15 +62,19 @@ class PassiveBuzzer_Utils {
     {}
 
     void toneOn(unsigned int freq) {
-      tone(_pin, freq);
+      #ifndef COMPONENTUTILS8A_NO_TONE
+          tone(_pin, freq);
+      #endif
     }
 
     void toneOff() {
-      noTone(_pin);
+      #ifndef COMPONENTUTILS8A_NO_TONE
+          noTone(_pin);
+      #endif
     }
 
     void beep(unsigned int freq, unsigned long duration) {
-      tone(_pin, freq);
+      toneOn(freq);
 
       _isBeeping = true;
       _beepFreq = freq;
@@ -77,7 +87,7 @@ class PassiveBuzzer_Utils {
     void update() {
       if (_isBeeping) {
         if (millis() - _beepStart >= _beepDuration) {
-          noTone(_pin);
+          toneOff();
           _isBeeping = false;
         }
       }
