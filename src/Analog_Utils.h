@@ -235,14 +235,14 @@ class Phototransistor_Utils : public AnalogIn {
     struct Calibration { float scale; float offset; };
 
     Phototransistor_Utils(uint8_t pin, float vRef = 5.0f, float scale = 1.0f, float offset = 0.0f)
-      : AnalogInput(pin), _vRef(vRef), _inverted(false), _cal{ scale, offset } {}
+      : AnalogIn(pin), _vRef(vRef), _inverted(false), _cal{ scale, offset } {}
 
     void begin(int resolutionADC = 10) override {
-      AnalogInput::begin(resolutionADC);
+      AnalogIn::begin(resolutionADC);
     }
 
     void update() override {
-      AnalogInput::update();
+      AnalogIn::update();
     }
 
     float getVoltage() const {
