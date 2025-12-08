@@ -16,10 +16,8 @@ public:
 
     #if defined(analogReadResolution)
       analogReadResolution(resolutionADC);
-      _scaleADC = getScaleFactorADC(resolutionADC);
-    #else
-      _scaleADC = getScaleFactorADC(10);
     #endif
+    _scaleADC = getScaleFactorADC(resolutionADC);
 
     pinMode(_pin, INPUT);
 
