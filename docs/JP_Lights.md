@@ -29,7 +29,8 @@ OneMoreTime chaseTimer(ANIMATION_INTERVAL);
 int currentMode = 0;
 const int maxModes = 3;
 int colorIndex = 0;
-const int numColors = 12;
+// const int numColors = 12;
+const int numColors = 4;
 
 /* EEPROM  Setup */
 #define EEPROM_MODE_ADDR 0
@@ -70,7 +71,7 @@ const char* COLOR_NAME[NUM_COLOR_OPTIONS] = {
 ### LED Display Mode Functions
 
 ```cpp
-#define NUM_COLOR_OPTIONS 12
+#define NUM_COLOR_OPTIONS 4
 
 int COLOR_RGB[NUM_COLOR_OPTIONS][3] = {
   { 250, 0, 0 }, { 255, 75, 0 }, { 0, 250, 0 }, { 0, 0, 250 }
