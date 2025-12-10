@@ -150,11 +150,6 @@ void setup() {
 void loop() {
   button.update();
 
-  if (button.wasDoubleClicked()) {
-    currentMode = 0;
-    //Serial.println("Double Click");
-  }
-
   if (button.wasPressed()) {
     currentMode++;
     if (currentMode > maxModes) currentMode = 0;
@@ -165,6 +160,12 @@ void loop() {
     colorIndex++;
     if (colorIndex >= numColors) colorIndex = 0;
     //Serial.println("Button Held");
+  }
+
+  if (button.wasDoubleClicked()) {
+    currentMode = 0;
+    colorIndex = 0;
+    //Serial.println("Double Click");
   }
 
   saveSettings();

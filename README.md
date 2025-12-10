@@ -76,5 +76,6 @@ Bttn_Utils button(2); // Pushbutton (Active Low)
 Knob_Utils knob(A0); // Potentiometer (Wiper on pin A0)
 LDR_Utils ldr(A1); // Photoresistor Circuit
 Thermistor_Utils temp(A2); // NTC Thermistor Circuit
-
+ActiveBuzzer_Utils buzzer(8);
+PassiveBuzzer_Utils buzz(7);
 ```
