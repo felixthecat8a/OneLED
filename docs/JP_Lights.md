@@ -9,25 +9,26 @@ This sketch uses the `ComponentUtils8A` library for handling input timing and an
 ## Setup
 
 ```cpp
-#include <Adafruit_NeoPixel.h>
 #include <EEPROM.h>
 #include <ComponentUtils8A.h>
-
-/* NeoPixel Setup */
-#define DATA_PIN A0
-#define NUM_PIXELS 91
-Adafruit_NeoPixel strip(NUM_PIXELS, DATA_PIN, NEO_RGB + NEO_KHZ800);
+#include <Adafruit_NeoPixel.h>
 
 /* Button & Timer Setup */
 #define BUTTON_PIN 2
 Bttn_Utils button(BUTTON_PIN, true, 50);
 
-const unsigned long ANIMATION_INTERVAL = 150;
-OneMoreTime chaseTimer(ANIMATION_INTERVAL);
+const unsigned long ANIMATION_INTERVAL = 250;
+OneMoreTime animationTimer(ANIMATION_INTERVAL);
+
+/* NeoPixel Setup */
+#define DATA_PIN A0
+#define NUM_PIXELS 91
+// Adafruit_NeoPixel strip(NUM_PIXELS, DATA_PIN, NEO_RGB + NEO_KHZ800);
+Adafruit_NeoPixel strip(NUM_PIXELS, DATA_PIN, NEO_GRB + NEO_KHZ800);
 
 /* Mode & Color Initial Variables */
 int currentMode = 0;
-const int maxModes = 3;
+const int maxModes = 5;
 int colorIndex = 0;
 // const int numColors = 12;
 const int numColors = 4;
@@ -81,9 +82,17 @@ const char* COLOR_NAME[NUM_COLOR_OPTIONS] = {
   "Red", "Amber", "Green", "Blue"
 };
 
-void setArrayColor(int c) {
+void setOneArrayColor(int c) {
   //Serial.println(COLOR_NAME[c]);
   for (int i = 0 ; i < strip.numPixels(); i++) {
+    strip.setPixelColor(i,COLOR_RGB[c][0],COLOR_RGB[c][1],COLOR_RGB[c][2]);
+  }
+  strip.show();
+}
+
+void setAllArrayColors() {
+  for (int i = 0; i < strip.numPixels(); i++) {
+    int c = i % NUM_COLOR_OPTIONS;
     strip.setPixelColor(i,COLOR_RGB[c][0],COLOR_RGB[c][1],COLOR_RGB[c][2]);
   }
   strip.show();
@@ -95,28 +104,29 @@ void setArrayColorAndWhite(int c) {
     if (i % 2 == 0) {
       strip.setPixelColor(i,COLOR_RGB[c][0],COLOR_RGB[c][1],COLOR_RGB[c][2]);
     } else {
-      strip.setPixelColor(i,180,180,180);
+      strip.setPixelColor(i,127,127,127);
     }
   }
   strip.show();
 }
 
-void setOff() {
-  //Serial.println("Lights Off");
-  for (int i = 0 ; i < strip.numPixels(); i++) {
-    strip.setPixelColor(i, strip.Color(0, 0, 0));
-  }
-  strip.show();
-}
-```
-
-## LED Color Chase Animation Function
-
-```cpp
-void updateArrayColorChase(int c) {
-  chaseTimer.update();
+void updateArrayColorChase() {
+  animationTimer.update();
   static int animationStep = 0;
-  if(chaseTimer.tick()) {
+  if(animationTimer.tick()) {
+    for (int i = 0; i < strip.numPixels(); i++) {
+      int c = (i + animationStep) % NUM_COLOR_OPTIONS;
+      strip.setPixelColor(i,COLOR_RGB[c][0],COLOR_RGB[c][1],COLOR_RGB[c][2]);
+    }
+    strip.show();
+    animationStep = (animationStep + 1) % NUM_COLOR_OPTIONS;
+  }
+}
+
+void updateArrayColorAndWhiteChase(int c) {
+  animationTimer.update();
+  static int animationStep = 0;
+  if(animationTimer.tick()) {
     for (int i = 0; i < strip.numPixels(); i++) {
       if ((i + animationStep) % 3 == 0) {
         strip.setPixelColor(i,COLOR_RGB[c][0],COLOR_RGB[c][1],COLOR_RGB[c][2]);
@@ -127,6 +137,14 @@ void updateArrayColorChase(int c) {
     strip.show();
     animationStep = (animationStep + 1) % 3;
   }
+}
+
+void setOff() {
+  //Serial.println("Lights Off");
+  for (int i = 0 ; i < strip.numPixels(); i++) {
+    strip.setPixelColor(i, strip.Color(0, 0, 0));
+  }
+  strip.show();
 }
 ```
 
@@ -171,10 +189,12 @@ void loop() {
   saveSettings();
 
   switch (currentMode) {
-    case 0: setArrayColor(colorIndex); break;
-    case 1: setArrayColorAndWhite(colorIndex); break;
-    case 2: updateArrayColorChase(colorIndex); break;
-    case 3: updateChristmasTreeLights(); break;
+    case 0: setOneArrayColor(colorIndex); break;
+    case 1: setAllArrayColors(); break;
+    case 2: setArrayColorAndWhite(colorIndex); break;
+    case 3: updateArrayColorChase(); break;
+    case 4: updateArrayColorAndWhiteChase(colorIndex); break;
+    case 5: updateChristmasTreeLights(); break;
     default: setOff(); break;
   }
 }
