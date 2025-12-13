@@ -127,7 +127,6 @@ void setChristmasTreeLightColorAndWhite(int c) {
       strip.setPixelColor(i, LIGHT_COLORS[c]);
     } else {
       strip.setPixelColor(i,127,127,127);
-      strip.setPixelColor(i,127,127,127);
     }
   }
   strip.show();
@@ -140,7 +139,6 @@ void setChristmasTreeLightColorAndWhite(int c) {
 void updateChristmasTreeLightColorAndWhiteChase(int c) {
   animationTimer.update();
   static int animationStep = 0;
-  if(animationTimer.tick()) {
   if(animationTimer.tick()) {
     for (int i = 0; i < strip.numPixels(); i++) {
       if ((i + animationStep) % 3 == 0) {
