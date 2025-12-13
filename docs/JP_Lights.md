@@ -318,6 +318,3 @@ void updateChristmasTreeLightTwinkle() {
   strip.show();
 }
 ```
-
-- TODO: Apply `ComponentUtils8A` Library
-- 
