@@ -9,21 +9,22 @@ This sketch uses the `ComponentUtils8A` library for handling input timing and an
 ## Setup
 
 ```cpp
-#include <Adafruit_NeoPixel.h>
 #include <EEPROM.h>
 #include <ComponentUtils8A.h>
-
-/* NeoPixel Setup */
-#define DATA_PIN A0
-#define NUM_PIXELS 91
-Adafruit_NeoPixel strip(NUM_PIXELS, DATA_PIN, NEO_RGB + NEO_KHZ800);
+#include <Adafruit_NeoPixel.h>
 
 /* Button & Timer Setup */
 #define BUTTON_PIN 2
 Bttn_Utils button(BUTTON_PIN, true, 50);
 
-const unsigned long ANIMATION_INTERVAL = 150;
-OneMoreTime chaseTimer(ANIMATION_INTERVAL);
+const unsigned long ANIMATION_INTERVAL = 250;
+OneMoreTime animationTimer(ANIMATION_INTERVAL);
+
+/* NeoPixel Setup */
+#define DATA_PIN A0
+#define NUM_PIXELS 91
+// Adafruit_NeoPixel strip(NUM_PIXELS, DATA_PIN, NEO_RGB + NEO_KHZ800);
+Adafruit_NeoPixel strip(NUM_PIXELS, DATA_PIN, NEO_GRB + NEO_KHZ800);
 
 /* Mode & Color Initial Variables */
 int currentMode = 0;
@@ -49,77 +50,90 @@ void saveSettings() {
 }
 ```
 
-## Color Array and Functions
+## Original Color Array and Functions
 
-Originally, the project used a 12-color palette and later simplified to four classic Christmas-light colors.
+Originally, the project used a 12-color palette.
 
 ```cpp
-#define NUM_COLOR_OPTIONS 12
+#define COLOR_OPTIONS 12
 
-int COLOR_RGB[NUM_COLOR_OPTIONS][3] = {
+int COLOR_RGB[COLOR_OPTIONS][3] = {
   { 250, 0, 0 }, { 250, 127, 0 }, { 250, 250, 0 }, { 127, 250, 0 }, 
   { 0, 250, 0 }, { 0, 250, 127 }, { 0, 250, 250 }, { 0, 127, 250 }, 
   { 0, 0, 250 }, { 127, 0, 250 }, { 250, 0, 250 }, { 250, 0, 127 },
 };
-const char* COLOR_NAME[NUM_COLOR_OPTIONS] = {
+const char* COLOR_NAME[COLOR_OPTIONS] = {
   "Red", "Orange", "Yellow", "LimeGreen",
   "Green", "SpringGreen", "Cyan", "SkyBlue",
   "Blue", "Purple", "Magenta", "Pink", 
 };
 ```
 
-### LED Display Mode Functions
+It was later simplified to four classic Christmas-light colors.
 
 ```cpp
-#define NUM_COLOR_OPTIONS 4
+#define COLOR_OPTIONS 4
 
-int COLOR_RGB[NUM_COLOR_OPTIONS][3] = {
+int COLOR_RGB[COLOR_OPTIONS][3] = {
   { 250, 0, 0 }, { 255, 75, 0 }, { 0, 250, 0 }, { 0, 0, 250 }
 };
 
-const char* COLOR_NAME[NUM_COLOR_OPTIONS] = {
+const char* COLOR_NAME[COLOR_OPTIONS] = {
   "Red", "Amber", "Green", "Blue"
 };
 
 void setArrayColor(int c) {
-  //Serial.println(COLOR_NAME[c]);
+  Serial.println(COLOR_NAME[c]);
   for (int i = 0 ; i < strip.numPixels(); i++) {
     strip.setPixelColor(i,COLOR_RGB[c][0],COLOR_RGB[c][1],COLOR_RGB[c][2]);
   }
   strip.show();
 }
+```
 
-void setArrayColorAndWhite(int c) {
-  //Serial.println(COLOR_NAME[c]); Serial.println(" and White");
-  for(int i = 0; i < strip.numPixels(); i++) {
-    if (i % 2 == 0) {
-      strip.setPixelColor(i,COLOR_RGB[c][0],COLOR_RGB[c][1],COLOR_RGB[c][2]);
-    } else {
-      strip.setPixelColor(i,180,180,180);
-    }
-  }
-  strip.show();
-}
+## Updated Color Palette and Functions
 
-void setOff() {
-  //Serial.println("Lights Off");
-  for (int i = 0 ; i < strip.numPixels(); i++) {
-    strip.setPixelColor(i, strip.Color(0, 0, 0));
+```cpp
+const uint32_t redLight = strip.Color(255, 0, 0);
+const uint32_t amberLight = strip.Color(255, 75, 0);
+const uint32_t greenLight = strip.Color(0, 255, 0);
+const uint32_t blueLight = strip.Color(0, 0, 255);
+
+const uint32_t LIGHT_COLORS[] = { redLight, amberLight, greenLight, blueLight };
+
+void setOneChristmasTreeLightColor(int c) {
+  for (int i = 0; i < strip.numPixels(); i++) {
+    strip.setPixelColor(i, LIGHT_COLORS[c]);
   }
   strip.show();
 }
 ```
 
-## LED Color Chase Animation Function
+### Selected Color and White Odd/Even Function
 
 ```cpp
-void updateArrayColorChase(int c) {
-  chaseTimer.update();
+void setChristmasTreeLightColorAndWhite(int c) {
+  for(int i = 0; i < strip.numPixels(); i++) {
+    if (i % 2 == 0) {
+      strip.setPixelColor(i, LIGHT_COLORS[c]);
+    } else {
+      strip.setPixelColor(i,127,127,127);
+    }
+  }
+  strip.show();
+}
+```
+
+### Selected Color Chase Animation Function
+
+```cpp
+void updateChristmasTreeLightColorAndWhiteChase(int c) {
+  animationTimer.update();
   static int animationStep = 0;
-  if(chaseTimer.tick()) {
+  if(animationTimer.tick()) {
     for (int i = 0; i < strip.numPixels(); i++) {
       if ((i + animationStep) % 3 == 0) {
-        strip.setPixelColor(i,COLOR_RGB[c][0],COLOR_RGB[c][1],COLOR_RGB[c][2]);
+        strip.setPixelColor(i, LIGHT_COLORS[c]);
       } else {
         strip.setPixelColor(i,127,127,127);
       }
@@ -137,7 +151,7 @@ void setup() {
   //Serial.begin(9600);
   button.begin();
   button.setHoldTime(1000); 
-  button.setDoubleClickTime(350);
+  button.setDoubleClickTime(250);
   
   loadSettings();
   strip.begin();
@@ -163,24 +177,26 @@ void loop() {
   }
 
   if (button.wasDoubleClicked()) {
-    currentMode = 0;
-    colorIndex = 0;
+    currentMode--;
+    if (currentMode < 0) currentMode = maxModes;
     //Serial.println("Double Click");
   }
 
   saveSettings();
 
   switch (currentMode) {
-    case 0: setArrayColor(colorIndex); break;
-    case 1: setArrayColorAndWhite(colorIndex); break;
-    case 2: updateArrayColorChase(colorIndex); break;
+    case 0: setOneChristmasTreeLightColor(colorIndex); break;
+    case 1: setChristmasTreeLightColorAndWhite(colorIndex); break;
+    case 2: updateChristmasTreeLightColorAndWhiteChase(colorIndex); break;
     case 3: updateChristmasTreeLights(); break;
     default: setOff(); break;
   }
 }
 ```
 
+
 ## Christmas Tree Light Color Animations
+
 Working on some Christmas Tree string light animations.
 
 > Typical Christmas Tree Light Color Options: Red, Amber, Green & Blue
