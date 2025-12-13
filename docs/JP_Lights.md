@@ -151,7 +151,40 @@ void updateChristmasTreeLightColorAndWhiteChase(int c) {
     animationStep = (animationStep + 1) % 3;
   }
 }
+```
 
+### Show All Colors
+
+```cpp
+void setAllChristmasTreeLightColors() {
+  for (int i = 0; i < strip.numPixels(); i++) {
+    int c = i % numColors;
+    strip.setPixelColor(i, LIGHT_COLORS[c]);
+  }
+  strip.show();
+}
+```
+
+### Animate All Colors
+
+```cpp
+void updateChristmasTreeLightColorChase() {
+  animationTimer.update();
+  static int animationStep = 0;
+  if(animationTimer.tick()) {
+    for (int i = 0; i < strip.numPixels(); i++) {
+      int c = (i + animationStep) % numColors;
+      strip.setPixelColor(i, LIGHT_COLORS[c]);
+    }
+    strip.show();
+    animationStep = (animationStep + 1) % numColors;
+  }
+}
+```
+
+### Default Lights Off Function
+
+```cpp
 void setOff() {
   //Serial.println("Lights Off");
   for (int i = 0 ; i < strip.numPixels(); i++) {
@@ -175,7 +208,7 @@ void setup() {
   strip.setBrightness(42);
   strip.clear();
 
-  setupChristmasTreeLights();
+  setupChristmasTreeLightTwinkle();
 }
 
 void loop() {
@@ -205,7 +238,9 @@ void loop() {
     case 0: setOneChristmasTreeLightColor(colorIndex); break;
     case 1: setChristmasTreeLightColorAndWhite(colorIndex); break;
     case 2: updateChristmasTreeLightColorAndWhiteChase(colorIndex); break;
-    case 3: updateChristmasTreeLights(); break;
+    case 3: setAllChristmasTreeLightColors(); break;
+    case 4: updateChristmasTreeLightColorChase(); break;
+    case 5: updateChristmasTreeLightTwinkle(); break;
     default: setOff(); break;
   }
 }
@@ -226,7 +261,7 @@ struct ColorLight {
   int colorIndex;
 };
 
-#define NUM_LIGHTS 20
+#define NUM_LIGHTS 30
 ColorLight lights[NUM_LIGHTS];
 
 unsigned long lastLightsUpdate = 0;
@@ -236,7 +271,7 @@ unsigned long lightInterval = 20;
 > Initiate Animation in `setup()`
 
 ```cpp
-void setupChristmasTreeLights() {
+void setupChristmasTreeLightTwinkle() {
   for (int i = 0; i < NUM_LIGHTS; i++) {
     lights[i].pixel = random(strip.numPixels());
     lights[i].brightness = random(0, 255);
@@ -249,7 +284,7 @@ void setupChristmasTreeLights() {
 > Run Animation in `loop()`
 
 ```cpp
-void updateChristmasTreeLights() {
+void updateChristmasTreeLightTwinkle() {
   unsigned long now = millis();
   if (now - lastLightsUpdate < lightInterval) return;
   lastLightsUpdate = now;
