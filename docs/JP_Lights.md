@@ -216,17 +216,9 @@ void loop() {
 
 Working on some Christmas Tree string light animations.
 
-> Typical Christmas Tree Light Color Options: Red, Amber, Green & Blue
+> Initial Variables
 
 ```cpp
-const uint32_t TREE_LIGHT_COLORS[] = {
-  strip.Color(255, 0, 0),
-  strip.Color(255, 191, 0),
-  strip.Color(0, 255, 0),
-  strip.Color(0, 0, 255)
-};
-const int NUM_TREE_LIGHT_COLORS = 4;
-
 struct ColorLight {
   int pixel;
   int brightness;
@@ -236,11 +228,7 @@ struct ColorLight {
 
 #define NUM_LIGHTS 20
 ColorLight lights[NUM_LIGHTS];
-```
 
-> Initial Variables
-
-```cpp
 unsigned long lastLightsUpdate = 0;
 unsigned long lightInterval = 20;
 ```
@@ -253,7 +241,7 @@ void setupChristmasTreeLights() {
     lights[i].pixel = random(strip.numPixels());
     lights[i].brightness = random(0, 255);
     lights[i].direction = random(0, 2) * 2 - 1; // -1 or 1
-    lights[i].colorIndex = random(NUM_TREE_LIGHT_COLORS);
+    lights[i].colorIndex = random(numColors);
   }
 }
 ```
@@ -278,12 +266,12 @@ void updateChristmasTreeLights() {
     }
     if (light.brightness <= 0) {
       light.pixel = random(strip.numPixels());
-      light.colorIndex = random(NUM_TREE_LIGHT_COLORS);
+      light.colorIndex = random(numColors);
       light.direction = 1;
       light.brightness = 0;
     }
 
-    uint32_t c = TREE_LIGHT_COLORS[light.colorIndex];
+    uint32_t c = LIGHT_COLORS[light.colorIndex];
 
     uint8_t r = ((c >> 16) & 0xFF) * light.brightness / 255;
     uint8_t g = ((c >> 8) & 0xFF) * light.brightness / 255;
