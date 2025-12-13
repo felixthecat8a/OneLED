@@ -12,6 +12,7 @@ This sketch uses the `ComponentUtils8A` library for handling input timing and an
 #include <EEPROM.h>
 #include <ComponentUtils8A.h>
 #include <Adafruit_NeoPixel.h>
+#include <Adafruit_NeoPixel.h>
 
 /* Button & Timer Setup */
 #define BUTTON_PIN 2
@@ -25,10 +26,18 @@ OneMoreTime animationTimer(ANIMATION_INTERVAL);
 #define NUM_PIXELS 91
 // Adafruit_NeoPixel strip(NUM_PIXELS, DATA_PIN, NEO_RGB + NEO_KHZ800);
 Adafruit_NeoPixel strip(NUM_PIXELS, DATA_PIN, NEO_GRB + NEO_KHZ800);
+const unsigned long ANIMATION_INTERVAL = 250;
+OneMoreTime animationTimer(ANIMATION_INTERVAL);
+
+/* NeoPixel Setup */
+#define DATA_PIN A0
+#define NUM_PIXELS 91
+// Adafruit_NeoPixel strip(NUM_PIXELS, DATA_PIN, NEO_RGB + NEO_KHZ800);
+Adafruit_NeoPixel strip(NUM_PIXELS, DATA_PIN, NEO_GRB + NEO_KHZ800);
 
 /* Mode & Color Initial Variables */
 int currentMode = 0;
-const int maxModes = 3;
+const int maxModes = 5;
 int colorIndex = 0;
 // const int numColors = 12;
 const int numColors = 4;
@@ -118,6 +127,7 @@ void setChristmasTreeLightColorAndWhite(int c) {
       strip.setPixelColor(i, LIGHT_COLORS[c]);
     } else {
       strip.setPixelColor(i,127,127,127);
+      strip.setPixelColor(i,127,127,127);
     }
   }
   strip.show();
@@ -131,6 +141,7 @@ void updateChristmasTreeLightColorAndWhiteChase(int c) {
   animationTimer.update();
   static int animationStep = 0;
   if(animationTimer.tick()) {
+  if(animationTimer.tick()) {
     for (int i = 0; i < strip.numPixels(); i++) {
       if ((i + animationStep) % 3 == 0) {
         strip.setPixelColor(i, LIGHT_COLORS[c]);
@@ -141,6 +152,14 @@ void updateChristmasTreeLightColorAndWhiteChase(int c) {
     strip.show();
     animationStep = (animationStep + 1) % 3;
   }
+}
+
+void setOff() {
+  //Serial.println("Lights Off");
+  for (int i = 0 ; i < strip.numPixels(); i++) {
+    strip.setPixelColor(i, strip.Color(0, 0, 0));
+  }
+  strip.show();
 }
 ```
 
