@@ -12,22 +12,16 @@ This sketch uses the `ComponentUtils8A` library for handling input timing and an
 #include <EEPROM.h>
 #include <ComponentUtils8A.h>
 #include <Adafruit_NeoPixel.h>
-#include <Adafruit_NeoPixel.h>
 
 /* Button & Timer Setup */
 #define BUTTON_PIN 2
 Bttn_Utils button(BUTTON_PIN, true, 50);
 
-const unsigned long ANIMATION_INTERVAL = 250;
-OneMoreTime animationTimer(ANIMATION_INTERVAL);
+const unsigned long CHASE_INTERVAL = 250;
+OneMoreTime animationTimer(CHASE_INTERVAL);
 
-/* NeoPixel Setup */
-#define DATA_PIN A0
-#define NUM_PIXELS 91
-// Adafruit_NeoPixel strip(NUM_PIXELS, DATA_PIN, NEO_RGB + NEO_KHZ800);
-Adafruit_NeoPixel strip(NUM_PIXELS, DATA_PIN, NEO_GRB + NEO_KHZ800);
-const unsigned long ANIMATION_INTERVAL = 250;
-OneMoreTime animationTimer(ANIMATION_INTERVAL);
+const unsigned long TWINKLE_INTERVAL = 20;
+OneMoreTime twinkleTimer(TWINKLE_INTERVAL);
 
 /* NeoPixel Setup */
 #define DATA_PIN A0
@@ -251,6 +245,8 @@ void loop() {
 
 Working on some Christmas Tree string light animations.
 
+### Twinkling Light Animation 
+
 > Initial Variables
 
 ```cpp
@@ -264,8 +260,8 @@ struct ColorLight {
 #define NUM_LIGHTS 30
 ColorLight lights[NUM_LIGHTS];
 
-unsigned long lastLightsUpdate = 0;
-unsigned long lightInterval = 20;
+// unsigned long lastLightsUpdate = 0;
+// unsigned long lightInterval = 20;
 ```
 
 > Initiate Animation in `setup()`
@@ -285,9 +281,12 @@ void setupChristmasTreeLightTwinkle() {
 
 ```cpp
 void updateChristmasTreeLightTwinkle() {
-  unsigned long now = millis();
-  if (now - lastLightsUpdate < lightInterval) return;
-  lastLightsUpdate = now;
+  // unsigned long now = millis();
+  // if (now - lastLightsUpdate < lightInterval) return;
+  // lastLightsUpdate = now;
+
+  twinkleTimer.update();
+  if (!twinkleTimer.tick()) return;
 
   strip.clear();
 
@@ -315,6 +314,32 @@ void updateChristmasTreeLightTwinkle() {
     strip.setPixelColor(light.pixel, strip.Color(r, g, b));
   }
 
+  strip.show();
+}
+```
+
+### Candy Cane Flash Animation
+
+```cpp
+struct ColorFlash {
+  unsigned long lastUpdate = 0;
+  unsigned long interval = 400;
+  bool toggle = false;
+};
+
+ColorFlash flash;
+
+void updateCandyCaneFlash() {
+  if (millis() - flash.lastUpdate < flash.interval) return;
+  flash.lastUpdate = millis();
+  flash.toggle = !flash.toggle;
+
+  for (int i = 0; i < strip.numPixels(); i++) {
+    if ((i + flash.toggle) % 2 == 0)
+      strip.setPixelColor(i,redLight);
+    else
+      strip.setPixelColor(i,greenLight);
+  }
   strip.show();
 }
 ```
